@@ -121,6 +121,25 @@
     .rule { border: 1px solid var(--line); background: #fbfcff; border-radius: 14px; padding: 13px; min-height: 92px; }
     .rule b { display: block; margin-bottom: 6px; font-size: 13px; }
     .rule span { color: var(--muted); font-size: 12px; line-height: 1.55; }
+    .rule-board { padding: 18px 20px; display: grid; gap: 14px; }
+    .rule-focus { border: 1px solid #b8ccff; background: linear-gradient(135deg, #f8fbff, #eef4ff); border-radius: 16px; padding: 15px 16px; display: flex; gap: 12px; align-items: flex-start; }
+    .rule-focus .badge { flex: 0 0 auto; width: 34px; height: 34px; border-radius: 12px; display: grid; place-items: center; background: var(--blue); color: #fff; font-weight: 900; }
+    .rule-focus b { display: block; margin-bottom: 4px; }
+    .rule-focus span { color: #475467; font-size: 13px; line-height: 1.6; }
+    .decision-table th, .decision-table td { font-size: 13px; }
+    .decision-table th { color: #344054; }
+    .decision-table .time { font-weight: 900; font-size: 15px; white-space: nowrap; }
+    .decision-table .primary-action { font-weight: 900; color: #172033; }
+    .mini-tag { display:inline-flex; padding: 3px 8px; border-radius: 999px; font-size: 12px; font-weight: 800; white-space: nowrap; }
+    .mini-tag.free { color:#08784f; background:var(--green2); }
+    .mini-tag.leave { color:#1d4ed8; background:var(--blue2); }
+    .mini-tag.deduct { color:#b42318; background:var(--red2); }
+    .mini-tag.settle { color:#a15c07; background:var(--orange2); }
+    .legend-row { display: flex; flex-wrap: wrap; gap: 8px; color: var(--muted); font-size: 12px; }
+    .split-rule { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .split-card { border: 1px solid var(--line); background: #fff; border-radius: 14px; padding: 13px; }
+    .split-card b { display: block; margin-bottom: 8px; }
+    .split-card span { display: block; color: var(--muted); font-size: 12px; line-height: 1.55; }
     .flow { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; padding: 18px 20px; }
     .step { border: 1px solid var(--line); background: #fff; border-radius: 14px; padding: 12px; position: relative; min-height: 88px; }
     .step:not(:last-child)::after { content: "→"; position: absolute; right: -12px; top: 34px; color: #98a2b3; font-weight: 900; }
@@ -167,7 +186,7 @@
     @media (max-width: 980px) {
       .hero, .grid, .two-col { grid-template-columns: 1fr; }
       .side { position: static; }
-      .metrics, .summary-strip, .flow, .info-grid, .form-grid { grid-template-columns: 1fr; }
+      .metrics, .summary-strip, .flow, .info-grid, .form-grid, .split-rule { grid-template-columns: 1fr; }
       .step::after { display: none; }
       th:nth-child(4), td:nth-child(4) { display: none; }
     }
@@ -209,20 +228,78 @@
     <section id="overview" class="view active">
       <div class="card">
         <div class="card-head">
-          <div><h2>核心规则一句话</h2><div class="hint">学生扣课时、请假权益、外教结算三件事拆开判断，不再共用一个阈值。</div></div>
+          <div><h2>规则总览｜先看时间窗口，再看处理结果</h2><div class="hint">业务只需要记住：请假是学生侧权益；取消是否扣课时看 24h；外教是否结算看 1h，三件事分开判断。</div></div>
         </div>
-        <div class="summary-strip">
-          <div class="rule"><b>距开课 &gt;24h</b><span>LP 可直接取消预约；学生不扣课时，也不消耗请假次数。</span></div>
-          <div class="rule"><b>距开课 2-24h</b><span>进入请假窗口；LP 办理请假成功后，学生不扣课时，消耗 1 次请假权益。</span></div>
-          <div class="rule"><b>距开课 1-2h</b><span>已过请假窗口；如取消预约，学生扣课时，外教暂不按 1h 规则结算。</span></div>
-          <div class="rule"><b>距开课 ≤1h</b><span>如取消预约，学生扣课时；外教侧按结算规则处理。</span></div>
+        <div class="rule-board">
+          <div class="rule-focus">
+            <div class="badge">1</div>
+            <div>
+              <b>一句话口径</b>
+              <span>LP 处理一节课时，先看“距开课多久”：超过 24h 直接取消；2-24h 走请假；小于 2h 不能请假，取消会扣学生课时；小于等于 1h 时，外教结算再按结算规则独立处理。</span>
+            </div>
+          </div>
+          <table class="decision-table">
+            <thead>
+              <tr>
+                <th>距开课时间</th>
+                <th>LP 可做什么</th>
+                <th>学生课时</th>
+                <th>请假权益</th>
+                <th>外教结算</th>
+                <th>业务解释</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="time">&gt; 24h</td>
+                <td class="primary-action">普通取消</td>
+                <td><span class="mini-tag free">不扣课时</span></td>
+                <td>不消耗</td>
+                <td>不触发 1h 结算</td>
+                <td>离开课还早，用户正常取消，不需要动用请假权益。</td>
+              </tr>
+              <tr class="highlight">
+                <td class="time">2-24h</td>
+                <td class="primary-action">办理请假</td>
+                <td><span class="mini-tag free">请假成功不扣</span></td>
+                <td><span class="mini-tag leave">消耗 1 次</span></td>
+                <td>不触发 1h 结算</td>
+                <td>这是 LP 请假的核心窗口：用请假权益保护学生课时。</td>
+              </tr>
+              <tr>
+                <td class="time">1-2h</td>
+                <td class="primary-action">不可请假，可取消</td>
+                <td><span class="mini-tag deduct">扣课时</span></td>
+                <td>不消耗</td>
+                <td>暂不触发 1h 结算</td>
+                <td>已过请假窗口；如果仍取消，学生侧按临近取消处理。</td>
+              </tr>
+              <tr>
+                <td class="time">≤ 1h</td>
+                <td class="primary-action">不可请假，可取消</td>
+                <td><span class="mini-tag deduct">扣课时</span></td>
+                <td>不消耗</td>
+                <td><span class="mini-tag settle">按规则判断</span></td>
+                <td>学生侧和外教侧分开算：学生扣课时，外教是否结算看结算规则。</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="legend-row">
+            <span>✅ 重点：不要把“学生是否扣课时”和“外教是否结算”混成一个规则。</span>
+            <span>📌 Demo 中可点击「LP 发起请假」查看各时间窗口对应弹窗。</span>
+          </div>
         </div>
-        <div class="flow">
-          <div class="step"><b>课程已预约</b><span>状态 BOOKED，进入时间判断。</span></div>
-          <div class="step"><b>判断距开课</b><span>>24h / 2-24h / 1-2h / ≤1h。</span></div>
-          <div class="step"><b>LP 操作</b><span>取消预约或办理请假。</span></div>
-          <div class="step"><b>学生侧结果</b><span>是否扣课时由 24h 和请假成功决定。</span></div>
-          <div class="step"><b>外教侧结果</b><span>是否结算由 1h 规则独立判断。</span></div>
+      </div>
+      <div class="card" style="margin-top:18px;">
+        <div class="card-head">
+          <div><h2>三条规则拆开看</h2><div class="hint">给业务同步时，这一块用来解释为什么会有 24h、2h、1h 三个阈值。</div></div>
+        </div>
+        <div class="rule-board">
+          <div class="split-rule">
+            <div class="split-card"><b>学生侧：24h</b><span>距开课 24h 以内取消，默认会影响学生课时；但如果在 2-24h 内成功办理请假，则不扣课时。</span></div>
+            <div class="split-card"><b>请假权益：2-24h</b><span>LP 只能在这个窗口内办理请假；请假成功消耗 1 次权益，并把课程置为「已请假」。</span></div>
+            <div class="split-card"><b>外教侧：1h</b><span>外教结算是独立规则，不决定学生是否扣课时；小于等于 1h 的场景需要按外教结算口径处理。</span></div>
+          </div>
         </div>
       </div>
       <div class="two-col" style="margin-top:18px;">
