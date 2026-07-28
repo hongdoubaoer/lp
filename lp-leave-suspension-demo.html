@@ -198,7 +198,7 @@
     <section class="hero">
       <div class="hero-main">
         <h1>LP 请假 & 休学功能业务演示 Demo</h1>
-        <p class="subtitle">业务演示版：用可点击流程说明课程取消、请假、休学的关键规则与弹窗状态。</p>
+        <p class="subtitle">围绕 LP 实际操作路径，展示课程取消、请假、休学的关键判断与弹窗状态。</p>
         <div class="metrics">
           <div class="metric"><b>24h</b><span>学生侧扣课时阈值</span></div>
           <div class="metric"><b>2-24h</b><span>LP 可办理请假窗口</span></div>
@@ -207,12 +207,11 @@
         </div>
       </div>
       <div class="hero-side">
-        <h3>课程取消 & 请假口径</h3>
+        <h3>核心判断</h3>
         <ol>
-          <li><b>距开课 &gt;24h：</b>普通取消，不扣学生课时</li>
-          <li><b>距开课 2-24h：</b>LP 可办理请假，请假成功不扣课时</li>
-          <li><b>距开课 ≤24h 且未请假：</b>取消会扣学生课时</li>
-          <li><b>距开课 ≤1h：</b>外教结算按规则独立判断</li>
+          <li><b>先看距开课时间：</b>决定可取消、可请假或仅可取消</li>
+          <li><b>再看请假次数：</b>2-24h 内有次数才可办理请假</li>
+          <li><b>最后看休学条件：</b>有有效课包、有次数、日期不跨月</li>
         </ol>
       </div>
     </section>
@@ -228,96 +227,82 @@
     <section id="overview" class="view active">
       <div class="card">
         <div class="card-head">
-          <div><h2>规则总览｜先看时间窗口，再看处理结果</h2><div class="hint">业务只需要记住：请假是学生侧权益；取消是否扣课时看 24h；外教是否结算看 1h，三件事分开判断。</div></div>
+          <div><h2>规则总览｜课程取消 / 请假 / 休学怎么判断</h2><div class="hint">按业务操作顺序看：先判断课程距开课时间，再判断是否有请假次数；休学单独判断课包、次数和日期范围。</div></div>
         </div>
         <div class="rule-board">
           <div class="rule-focus">
             <div class="badge">1</div>
             <div>
               <b>一句话口径</b>
-              <span>LP 处理一节课时，先看“距开课多久”：超过 24h 直接取消；2-24h 走请假；小于 2h 不能请假，取消会扣学生课时；小于等于 1h 时，外教结算再按结算规则独立处理。</span>
+              <span>课程处理先看距开课时间；如果进入 2-24h 请假窗口，还必须继续判断是否有剩余请假次数。休学不跟单节课时间窗口混在一起，单独看有效课包、休学次数和起止日期。</span>
             </div>
           </div>
           <table class="decision-table">
             <thead>
               <tr>
-                <th>距开课时间</th>
+                <th>业务场景</th>
+                <th>判断条件</th>
                 <th>LP 可做什么</th>
-                <th>学生课时</th>
-                <th>请假权益</th>
+                <th>学生课时 / 权益</th>
                 <th>外教结算</th>
-                <th>业务解释</th>
+                <th>结果展示</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td class="time">&gt; 24h</td>
+                <td class="time">课程取消</td>
+                <td>&gt; 24h</td>
                 <td class="primary-action">普通取消</td>
-                <td><span class="mini-tag free">不扣课时</span></td>
-                <td>不消耗</td>
+                <td><span class="mini-tag free">不扣课时</span><br><span class="small">不消耗请假次数</span></td>
                 <td>不触发 1h 结算</td>
-                <td>离开课还早，用户正常取消，不需要动用请假权益。</td>
+                <td>课程取消成功</td>
               </tr>
               <tr class="highlight">
-                <td class="time">2-24h</td>
+                <td class="time">课程请假</td>
+                <td>2-24h，且剩余请假次数 &gt; 0</td>
                 <td class="primary-action">办理请假</td>
-                <td><span class="mini-tag free">请假成功不扣</span></td>
-                <td><span class="mini-tag leave">消耗 1 次</span></td>
+                <td><span class="mini-tag free">不扣课时</span><br><span class="mini-tag leave">消耗 1 次请假</span></td>
                 <td>不触发 1h 结算</td>
-                <td>这是 LP 请假的核心窗口：用请假权益保护学生课时。</td>
+                <td>课程展示「已请假」</td>
               </tr>
               <tr>
-                <td class="time">1-2h</td>
+                <td class="time">无请假次数</td>
+                <td>2-24h，但剩余请假次数 = 0</td>
                 <td class="primary-action">不可请假，可取消</td>
-                <td><span class="mini-tag deduct">扣课时</span></td>
-                <td>不消耗</td>
+                <td><span class="mini-tag deduct">取消扣课时</span><br><span class="small">不消耗请假次数</span></td>
+                <td>不触发 1h 结算</td>
+                <td>请假入口不展示 / 提示次数已用完</td>
+              </tr>
+              <tr>
+                <td class="time">临近开课</td>
+                <td>1-2h</td>
+                <td class="primary-action">不可请假，可取消</td>
+                <td><span class="mini-tag deduct">取消扣课时</span></td>
                 <td>暂不触发 1h 结算</td>
-                <td>已过请假窗口；如果仍取消，学生侧按临近取消处理。</td>
+                <td>按临近取消处理</td>
               </tr>
               <tr>
-                <td class="time">≤ 1h</td>
+                <td class="time">极临近开课</td>
+                <td>≤ 1h</td>
                 <td class="primary-action">不可请假，可取消</td>
-                <td><span class="mini-tag deduct">扣课时</span></td>
-                <td>不消耗</td>
+                <td><span class="mini-tag deduct">取消扣课时</span></td>
                 <td><span class="mini-tag settle">按规则判断</span></td>
-                <td>学生侧和外教侧分开算：学生扣课时，外教是否结算看结算规则。</td>
+                <td>学生侧和外教侧分别处理</td>
+              </tr>
+              <tr class="highlight">
+                <td class="time">用户休学</td>
+                <td>有有效课包、剩余休学次数 &gt; 0，且起止日期同月</td>
+                <td class="primary-action">发起休学</td>
+                <td><span class="mini-tag leave">消耗 1 次休学</span><br><span class="small">休学期内不可约课</span></td>
+                <td>不由休学规则决定</td>
+                <td>休学期内展示「休学中」</td>
               </tr>
             </tbody>
           </table>
           <div class="legend-row">
-            <span>✅ 重点：不要把“学生是否扣课时”和“外教是否结算”混成一个规则。</span>
-            <span>📌 Demo 中可点击「LP 发起请假」查看各时间窗口对应弹窗。</span>
+            <span>✅ 重点：请假要同时满足“时间窗口”和“剩余次数”；休学要单独判断“课包、次数、日期”。</span>
+            <span>📌 下方可点击「LP 发起请假 / 休学」查看对应弹窗。</span>
           </div>
-        </div>
-      </div>
-      <div class="card" style="margin-top:18px;">
-        <div class="card-head">
-          <div><h2>三条规则拆开看</h2><div class="hint">给业务同步时，这一块用来解释为什么会有 24h、2h、1h 三个阈值。</div></div>
-        </div>
-        <div class="rule-board">
-          <div class="split-rule">
-            <div class="split-card"><b>学生侧：24h</b><span>距开课 24h 以内取消，默认会影响学生课时；但如果在 2-24h 内成功办理请假，则不扣课时。</span></div>
-            <div class="split-card"><b>请假权益：2-24h</b><span>LP 只能在这个窗口内办理请假；请假成功消耗 1 次权益，并把课程置为「已请假」。</span></div>
-            <div class="split-card"><b>外教侧：1h</b><span>外教结算是独立规则，不决定学生是否扣课时；小于等于 1h 的场景需要按外教结算口径处理。</span></div>
-          </div>
-        </div>
-      </div>
-      <div class="two-col" style="margin-top:18px;">
-        <div class="card checklist">
-          <h3>请假功能看什么</h3>
-          <ul>
-            <li>请假按钮只在 2-24h 且有权益时展示</li>
-            <li>确认弹窗讲清楚：消耗权益、不扣课时</li>
-            <li>提交时做课程状态、时间窗口、次数兜底</li>
-          </ul>
-        </div>
-        <div class="card checklist">
-          <h3>休学功能看什么</h3>
-          <ul>
-            <li>休学按钮按权限展示，点击后校验课包和次数</li>
-            <li>LP 可选起止日期，但不能跨自然月</li>
-            <li>要展示日期重叠、连续月份、提交兜底失败</li>
-          </ul>
         </div>
       </div>
     </section>
