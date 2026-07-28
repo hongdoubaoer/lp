@@ -179,7 +179,7 @@
     <section class="hero">
       <div class="hero-main">
         <h1>LP 请假 & 休学功能业务演示 Demo</h1>
-        <p class="subtitle">用于明天和业务同步：把复杂 PRD 转成可点击流程，重点看 24h/2h/1h 规则解耦、请假弹窗、休学弹窗、异常拦截、C 端展示结果。</p>
+        <p class="subtitle">业务演示版：用可点击流程说明课程取消、请假、休学的关键规则与弹窗状态。</p>
         <div class="metrics">
           <div class="metric"><b>24h</b><span>学生侧扣课时阈值</span></div>
           <div class="metric"><b>2-24h</b><span>LP 可办理请假窗口</span></div>
@@ -188,12 +188,12 @@
         </div>
       </div>
       <div class="hero-side">
-        <h3>建议演示顺序</h3>
+        <h3>课程取消 & 请假口径</h3>
         <ol>
-          <li>先看「规则总览」统一业务口径</li>
-          <li>演示「LP 发起请假」的按钮与弹窗</li>
-          <li>演示「LP 发起休学」的几种弹窗状态</li>
-          <li>最后看「业务确认点」收口待确认问题</li>
+          <li><b>距开课 &gt;24h：</b>普通取消，不扣学生课时</li>
+          <li><b>距开课 2-24h：</b>LP 可办理请假，请假成功不扣课时</li>
+          <li><b>距开课 ≤24h 且未请假：</b>取消会扣学生课时</li>
+          <li><b>距开课 ≤1h：</b>外教结算按规则独立判断</li>
         </ol>
       </div>
     </section>
@@ -212,10 +212,10 @@
           <div><h2>核心规则一句话</h2><div class="hint">学生扣课时、请假权益、外教结算三件事拆开判断，不再共用一个阈值。</div></div>
         </div>
         <div class="summary-strip">
-          <div class="rule"><b>普通取消 >24h</b><span>学生不扣课时，外教不结算；不需要请假权益。</span></div>
-          <div class="rule"><b>请假 2-24h</b><span>LP 可办理请假；消耗 1 次请假权益，学生不扣课时。</span></div>
-          <div class="rule"><b>临近取消 ≤24h</b><span>未请假直接取消，学生扣课时；是否结算外教看 1h 规则。</span></div>
-          <div class="rule"><b>超临时 ≤1h</b><span>学生扣课时，外教侧按规则结算。</span></div>
+          <div class="rule"><b>距开课 &gt;24h</b><span>LP 可直接取消预约；学生不扣课时，也不消耗请假次数。</span></div>
+          <div class="rule"><b>距开课 2-24h</b><span>进入请假窗口；LP 办理请假成功后，学生不扣课时，消耗 1 次请假权益。</span></div>
+          <div class="rule"><b>距开课 1-2h</b><span>已过请假窗口；如取消预约，学生扣课时，外教暂不按 1h 规则结算。</span></div>
+          <div class="rule"><b>距开课 ≤1h</b><span>如取消预约，学生扣课时；外教侧按结算规则处理。</span></div>
         </div>
         <div class="flow">
           <div class="step"><b>课程已预约</b><span>状态 BOOKED，进入时间判断。</span></div>
