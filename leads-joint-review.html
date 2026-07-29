@@ -3,26 +3,25 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Leads 分配 × 排班联合评审</title>
+  <title>Leads 分配与排班联合评审</title>
   <style>
     :root {
-      --bg: #f6f8fb;
-      --surface: #ffffff;
-      --ink: #172033;
-      --muted: #64748b;
-      --line: #dbe4f0;
+      --bg: #f7f8fb;
+      --card: #ffffff;
+      --ink: #111827;
+      --muted: #667085;
+      --line: #e6eaf0;
       --blue: #2563eb;
-      --blue-2: #dbeafe;
+      --blue-soft: #eff6ff;
       --purple: #7c3aed;
-      --purple-2: #ede9fe;
+      --purple-soft: #f3e8ff;
       --green: #059669;
-      --green-2: #d1fae5;
+      --green-soft: #ecfdf5;
       --amber: #d97706;
-      --amber-2: #fef3c7;
+      --amber-soft: #fffbeb;
       --red: #dc2626;
-      --red-2: #fee2e2;
-      --dark: #0f172a;
-      --shadow: 0 18px 45px rgba(15, 23, 42, .08);
+      --red-soft: #fef2f2;
+      --shadow: 0 14px 36px rgba(16, 24, 40, .07);
       --radius: 22px;
     }
 
@@ -30,349 +29,483 @@
     html { scroll-behavior: smooth; }
     body {
       margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
-      background:
-        radial-gradient(circle at top left, rgba(37,99,235,.12), transparent 34%),
-        radial-gradient(circle at 78% 8%, rgba(124,58,237,.10), transparent 28%),
-        var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
       color: var(--ink);
+      background: var(--bg);
     }
 
-    .shell { max-width: 1320px; margin: 0 auto; padding: 28px 24px 80px; }
+    .shell { max-width: 1180px; margin: 0 auto; padding: 24px 20px 72px; }
+
     .hero {
-      background: linear-gradient(135deg, #0f172a, #1e3a8a 62%, #4c1d95);
-      color: #fff;
       border-radius: 30px;
+      background: linear-gradient(135deg, #172554 0%, #1d4ed8 52%, #6d28d9 100%);
+      color: #fff;
       padding: 34px;
       box-shadow: var(--shadow);
-      position: relative;
       overflow: hidden;
+      position: relative;
     }
-    .hero:after {
+    .hero::after {
       content: "";
       position: absolute;
-      width: 340px; height: 340px;
-      right: -90px; top: -110px;
-      border-radius: 50%;
+      width: 300px;
+      height: 300px;
+      right: -90px;
+      top: -120px;
+      border-radius: 999px;
       background: rgba(255,255,255,.12);
     }
-    .eyebrow { display: inline-flex; gap: 8px; align-items: center; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; opacity: .86; position: relative; z-index: 1; }
-    h1 { margin: 12px 0 12px; font-size: clamp(30px, 4vw, 52px); line-height: 1.08; letter-spacing: -.04em; position: relative; z-index: 1; }
-    .hero p { margin: 0; max-width: 980px; font-size: 18px; line-height: 1.75; color: rgba(255,255,255,.82); position: relative; z-index: 1; }
-    .hero-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: 28px; position: relative; z-index: 1; }
-    .hero-card { background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.18); border-radius: 18px; padding: 18px; backdrop-filter: blur(8px); }
-    .hero-card strong { display:block; font-size: 20px; margin-bottom: 7px; }
-    .hero-card span { color: rgba(255,255,255,.76); font-size: 14px; line-height: 1.55; }
+    .eyebrow { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; opacity: .82; position: relative; z-index: 1; }
+    h1 { margin: 12px 0 12px; font-size: clamp(30px, 4vw, 48px); line-height: 1.08; letter-spacing: -.04em; position: relative; z-index: 1; }
+    .hero p { margin: 0; color: rgba(255,255,255,.82); font-size: 17px; line-height: 1.7; max-width: 860px; position: relative; z-index: 1; }
 
-    .nav { position: sticky; top: 0; z-index: 20; padding: 14px 0; background: rgba(246,248,251,.82); backdrop-filter: blur(12px); }
-    .nav-inner { display: flex; flex-wrap: wrap; gap: 10px; }
-    .nav a { text-decoration: none; color: var(--ink); background: var(--surface); border: 1px solid var(--line); padding: 9px 14px; border-radius: 999px; font-size: 14px; box-shadow: 0 8px 22px rgba(15,23,42,.04); }
-    .nav a:hover { border-color: var(--blue); color: var(--blue); }
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 24px;
+      position: relative;
+      z-index: 1;
+    }
+    .summary-card {
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 18px;
+      padding: 16px;
+      backdrop-filter: blur(8px);
+    }
+    .summary-card strong { display: block; font-size: 18px; margin-bottom: 8px; }
+    .summary-card span { color: rgba(255,255,255,.76); font-size: 14px; line-height: 1.55; }
 
-    section { margin-top: 28px; }
-    .section-title { display: flex; justify-content: space-between; align-items: end; gap: 18px; margin: 0 0 14px; }
-    .section-title h2 { margin: 0; font-size: 26px; letter-spacing: -.02em; }
-    .section-title p { margin: 0; color: var(--muted); line-height: 1.6; max-width: 760px; }
-    .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: 24px; }
-    .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
-    .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      padding: 12px 0;
+      background: rgba(247,248,251,.86);
+      backdrop-filter: blur(12px);
+    }
+    .nav-inner { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px; }
+    .nav a {
+      flex: none;
+      text-decoration: none;
+      color: #344054;
+      background: #fff;
+      border: 1px solid var(--line);
+      padding: 9px 13px;
+      border-radius: 999px;
+      font-size: 14px;
+      box-shadow: 0 6px 18px rgba(16,24,40,.04);
+    }
+
+    section { margin-top: 24px; }
+    .section-head { display: flex; justify-content: space-between; align-items: end; gap: 18px; margin-bottom: 14px; }
+    .section-head h2 { margin: 0; font-size: 25px; letter-spacing: -.03em; }
+    .section-head p { margin: 0; max-width: 640px; color: var(--muted); line-height: 1.6; font-size: 15px; }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 22px;
+      box-shadow: var(--shadow);
+    }
+    .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
     .grid-4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
 
     .tag { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 999px; font-size: 12px; font-weight: 800; }
-    .tag.blue { background: var(--blue-2); color: var(--blue); }
-    .tag.purple { background: var(--purple-2); color: var(--purple); }
-    .tag.green { background: var(--green-2); color: var(--green); }
-    .tag.amber { background: var(--amber-2); color: var(--amber); }
-    .tag.red { background: var(--red-2); color: var(--red); }
-    .tag.neutral { background: #eef2f7; color: #475569; }
+    .tag.blue { background: var(--blue-soft); color: var(--blue); }
+    .tag.purple { background: var(--purple-soft); color: var(--purple); }
+    .tag.green { background: var(--green-soft); color: var(--green); }
+    .tag.amber { background: var(--amber-soft); color: var(--amber); }
+    .tag.red { background: var(--red-soft); color: var(--red); }
+    .tag.gray { background: #f2f4f7; color: #475467; }
 
-    .headline { font-size: 20px; font-weight: 900; margin: 12px 0 8px; }
-    .muted { color: var(--muted); line-height: 1.7; }
-    .strong-line { font-size: 18px; line-height: 1.55; font-weight: 900; }
+    .title { margin: 12px 0 8px; font-size: 19px; font-weight: 900; letter-spacing: -.02em; }
+    .muted { color: var(--muted); line-height: 1.65; margin: 0; }
+    .divider { height: 1px; background: var(--line); margin: 16px 0; }
 
-    .callout {
+    .flow {
       display: grid;
-      grid-template-columns: 52px 1fr;
-      gap: 16px;
-      align-items: center;
-      padding: 20px;
-      border-radius: 22px;
-      background: linear-gradient(135deg, #eff6ff, #f5f3ff);
-      border: 1px solid #c7d2fe;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 12px;
     }
-    .callout .icon { width: 52px; height: 52px; border-radius: 18px; display: grid; place-items: center; background: #fff; color: var(--blue); font-size: 24px; font-weight: 900; }
-    .callout p { margin: 4px 0 0; color: var(--muted); line-height: 1.65; }
+    .flow-step {
+      position: relative;
+      min-height: 150px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px;
+      background: #fff;
+    }
+    .flow-step::after {
+      content: "→";
+      position: absolute;
+      right: -11px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #98a2b3;
+      font-weight: 900;
+    }
+    .flow-step:last-child::after { display: none; }
+    .num {
+      width: 30px;
+      height: 30px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      background: var(--blue-soft);
+      color: var(--blue);
+      font-weight: 900;
+      margin-bottom: 10px;
+    }
+    .flow-step h3, .mini-card h3, .scenario h3, .check h3 { margin: 0 0 8px; font-size: 16px; }
+    .flow-step p, .mini-card p, .scenario p, .check p { margin: 0; color: var(--muted); line-height: 1.55; font-size: 14px; }
 
-    .review-map { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
-    .map-step { position: relative; padding: 18px; border: 1px solid var(--line); border-radius: 20px; background: #fff; min-height: 150px; }
-    .map-step:after { content: "→"; position: absolute; right: -12px; top: 42%; color: #94a3b8; font-weight: 900; }
-    .map-step:last-child:after { display: none; }
-    .map-step .num { width: 30px; height: 30px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; background: var(--blue-2); color: var(--blue); font-weight: 900; margin-bottom: 10px; }
-    .map-step h3 { margin: 0 0 8px; font-size: 17px; }
-    .map-step p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.55; }
+    .mini-card {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px;
+      background: #fff;
+    }
+    .mini-card.blue { background: linear-gradient(180deg, #fff, var(--blue-soft)); }
+    .mini-card.purple { background: linear-gradient(180deg, #fff, var(--purple-soft)); }
+    .mini-card.green { background: linear-gradient(180deg, #fff, var(--green-soft)); }
+    .mini-card.amber { background: linear-gradient(180deg, #fff, var(--amber-soft)); }
 
-    .rule-list { list-style: none; padding: 0; margin: 16px 0 0; display: grid; gap: 10px; }
-    .rule-list li { display: flex; gap: 10px; align-items: flex-start; padding: 12px; border-radius: 14px; background: #f8fafc; border: 1px solid #edf2f7; line-height: 1.55; }
-    .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--blue); margin-top: 8px; flex: none; }
+    .decision-list { display: grid; gap: 10px; }
+    .decision {
+      display: grid;
+      grid-template-columns: 34px 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 12px;
+      border-radius: 16px;
+      background: #f9fafb;
+      border: 1px solid #edf0f5;
+    }
+    .decision .order {
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      background: #fff;
+      border: 1px solid var(--line);
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      color: #344054;
+    }
+    .decision strong { display: block; font-size: 15px; margin-bottom: 3px; }
+    .decision span { color: var(--muted); font-size: 13px; line-height: 1.45; }
 
-    .table-wrap { overflow: auto; border-radius: 18px; border: 1px solid var(--line); }
-    table { width: 100%; border-collapse: collapse; background: #fff; min-width: 860px; }
-    th, td { padding: 14px 16px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; line-height: 1.55; }
-    th { background: #f8fafc; font-size: 13px; color: #475569; white-space: nowrap; }
-    td { font-size: 14px; }
-    tr:last-child td { border-bottom: 0; }
+    .round-box {
+      display: grid;
+      grid-template-columns: .9fr 1.1fr;
+      gap: 16px;
+      align-items: stretch;
+    }
+    .cc-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+    .cc {
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: #fff;
+    }
+    .cc strong { display: block; font-size: 17px; margin-bottom: 8px; }
+    .seq { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .pill {
+      min-width: 34px;
+      height: 34px;
+      padding: 0 10px;
+      border-radius: 11px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 900;
+      background: var(--blue);
+    }
+    .pill.b { background: var(--purple); }
+    .pill.c { background: var(--green); }
 
-    .lane { display: grid; gap: 12px; }
-    .lane-row { display: grid; grid-template-columns: 150px repeat(5, minmax(0, 1fr)); gap: 10px; align-items: stretch; }
-    .lane-title { display: flex; align-items: center; justify-content: center; border-radius: 16px; padding: 12px; font-weight: 900; background: #f8fafc; border: 1px solid var(--line); }
-    .lane-cell { min-height: 104px; padding: 14px; border-radius: 16px; background: #fff; border: 1px solid var(--line); }
-    .lane-cell h4 { margin: 0 0 8px; font-size: 15px; }
-    .lane-cell p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.55; }
-    .lane-cell.empty { background: transparent; border-style: dashed; opacity: .45; }
+    .priority {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .priority-card {
+      padding: 16px;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: #fff;
+    }
+    .priority-card .big { font-size: 28px; font-weight: 900; margin-bottom: 6px; }
+    .priority-card h3 { margin: 0 0 8px; font-size: 17px; }
+    .priority-card p { margin: 0; color: var(--muted); line-height: 1.55; font-size: 14px; }
 
-    .round-demo { display: grid; grid-template-columns: 1.1fr .9fr; gap: 18px; align-items: stretch; }
-    .cc-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
-    .cc { border-radius: 18px; padding: 16px; border: 1px solid var(--line); background: #fff; }
-    .cc strong { display: block; font-size: 18px; margin-bottom: 8px; }
-    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
-    .chip { width: 32px; height: 32px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; font-weight: 900; color: #fff; background: var(--blue); }
-    .chip.b { background: var(--purple); }
-    .chip.c { background: var(--green); }
-    .sequence { display: flex; flex-wrap: wrap; gap: 8px; padding: 16px; border-radius: 18px; background: #f8fafc; border: 1px dashed #cbd5e1; }
+    .scenario-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .scenario {
+      padding: 18px;
+      border-radius: 20px;
+      border: 1px solid var(--line);
+      background: #fff;
+    }
+    .scenario .result {
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 14px;
+      background: #f9fafb;
+      color: #344054;
+      font-size: 14px;
+      line-height: 1.5;
+    }
 
-    .scenario-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
-    .scenario { padding: 18px; border-radius: 20px; border: 1px solid var(--line); background: #fff; }
-    .scenario h3 { margin: 10px 0 8px; font-size: 17px; }
-    .scenario p { margin: 0; color: var(--muted); line-height: 1.6; font-size: 14px; }
+    .swimlane { display: grid; gap: 10px; }
+    .lane-row { display: grid; grid-template-columns: 130px repeat(4, minmax(0, 1fr)); gap: 10px; }
+    .lane-title, .lane-cell {
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      padding: 13px;
+      background: #fff;
+      min-height: 92px;
+    }
+    .lane-title { display: flex; align-items: center; font-weight: 900; background: #f9fafb; }
+    .lane-cell h4 { margin: 0 0 6px; font-size: 14px; }
+    .lane-cell p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.45; }
+    .lane-cell.empty { background: transparent; border-style: dashed; opacity: .48; }
 
-    .review-points { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
-    .point { padding: 16px; border-radius: 18px; background: #fff; border: 1px solid var(--line); }
-    .point h3 { margin: 8px 0; font-size: 17px; }
-    .point p { margin: 0; color: var(--muted); line-height: 1.6; }
-    .footer { margin-top: 28px; padding: 22px; text-align: center; color: var(--muted); }
+    .check-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+    .check {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: #fff;
+    }
 
-    @media (max-width: 1080px) {
-      .hero-grid, .grid-2, .grid-3, .grid-4, .review-map, .round-demo, .scenario-grid, .review-points { grid-template-columns: 1fr; }
-      .map-step:after { content: "↓"; right: 50%; top: auto; bottom: -18px; }
-      .map-step:last-child:after { display:none; }
+    .footer { text-align: center; color: var(--muted); margin-top: 28px; padding: 22px; font-size: 13px; }
+
+    @media (max-width: 980px) {
+      .summary, .grid-2, .grid-3, .grid-4, .flow, .round-box, .priority, .scenario-grid, .check-grid { grid-template-columns: 1fr; }
+      .flow-step::after { content: "↓"; right: 50%; top: auto; bottom: -18px; transform: translateX(50%); }
+      .flow-step:last-child::after { display: none; }
       .lane-row { grid-template-columns: 1fr; }
-      .lane-title { justify-content: flex-start; }
+      .lane-title { min-height: auto; }
+      .nav-inner { padding-bottom: 8px; }
     }
   </style>
 </head>
 <body>
   <div class="shell">
     <header class="hero">
-      <div class="eyebrow">Leads Center Review · 联合评审</div>
-      <h1>Leads 分配 × CC 排班<br/>联合评审可视化页</h1>
-      <p>这次评审只需要拉齐一件事：<b>先把线索分给合适的 CC，再根据该 CC 的排班决定首触倒计时什么时候开始。</b>两个需求在同一条链路里，但职责边界不同。</p>
-      <div class="hero-grid">
-        <div class="hero-card"><strong>需求一：分配</strong><span>解决“线索给谁”的问题：按轮次和权重公平分配，兼顾日上限与暂停状态。</span></div>
-        <div class="hero-card"><strong>需求二：排班</strong><span>解决“何时计时”的问题：工作时间立即计时，非工作时间顺延，避免误掉库。</span></div>
-        <div class="hero-card"><strong>联合边界</strong><span>分配不依赖排班；排班不重新分配线索，只影响已分配线索的首触倒计时。</span></div>
+      <div class="eyebrow">Leads Center · Visual Review</div>
+      <h1>Leads 分配与<br/>CC 排班计时</h1>
+      <p>线索先完成分配，确定归属 CC；再读取该 CC 的排班，决定首触倒计时立即开始还是顺延。</p>
+      <div class="summary">
+        <div class="summary-card"><strong>分配机制</strong><span>解决“线索分给谁”：按策略、权重、日上限、暂停状态判断。</span></div>
+        <div class="summary-card"><strong>排班计时</strong><span>解决“什么时候开始计时”：特殊排班优先，其次小组常规排班。</span></div>
+        <div class="summary-card"><strong>模块边界</strong><span>排班不改变 CC 归属，只影响已分配线索的首触倒计时。</span></div>
       </div>
     </header>
 
     <nav class="nav">
       <div class="nav-inner">
-        <a href="#logic">评审主线</a>
-        <a href="#boundary">职责边界</a>
-        <a href="#allocation">需求一：分配</a>
-        <a href="#schedule">需求二：排班</a>
-        <a href="#swimlane">联合泳道</a>
-        <a href="#review">验收重点</a>
+        <a href="#flow">完整链路</a>
+        <a href="#boundary">模块边界</a>
+        <a href="#allocation">轮次分配</a>
+        <a href="#schedule">排班优先级</a>
+        <a href="#scenarios">掉库场景</a>
+        <a href="#swimlane">系统衔接</a>
+        <a href="#check">验收覆盖</a>
       </div>
     </nav>
 
-    <section id="logic">
-      <div class="section-title">
-        <h2>评审主线：按一条线索的生命周期讲</h2>
-        <p>不要先讲配置项，先讲业务链路。业务能快速理解结果，技术能快速定位系统边界。</p>
+    <section id="flow">
+      <div class="section-head">
+        <h2>完整链路</h2>
+        <p>一条线索从注册到进入 CC 私库，再到首触计时的完整过程。</p>
       </div>
       <div class="card">
-        <div class="review-map">
-          <div class="map-step"><span class="num">1</span><h3>线索进入</h3><p>用户注册后进入 Leads 平台，携带渠道、地区、来源等信息。</p></div>
-          <div class="map-step"><span class="num">2</span><h3>分配给谁</h3><p>命中分配策略，按轮次机制选择一个可分配 CC。</p></div>
-          <div class="map-step"><span class="num">3</span><h3>进入私库</h3><p>线索进入该 CC 私库，分配动作结束，不再被排班改写归属。</p></div>
-          <div class="map-step"><span class="num">4</span><h3>何时计时</h3><p>读取该 CC 排班，决定首触倒计时立即开始还是顺延。</p></div>
+        <div class="flow">
+          <div class="flow-step"><span class="num">1</span><h3>Lead 注册</h3><p>用户通过渠道进入，生成新线索。</p></div>
+          <div class="flow-step"><span class="num">2</span><h3>命中策略</h3><p>按渠道、地区、来源等条件匹配分配策略。</p></div>
+          <div class="flow-step"><span class="num">3</span><h3>分配 CC</h3><p>按轮次、权重、日上限、暂停状态选出 CC。</p></div>
+          <div class="flow-step"><span class="num">4</span><h3>读取排班</h3><p>读取被分配 CC 对应的小组排班与特殊排班。</p></div>
+          <div class="flow-step"><span class="num">5</span><h3>启动计时</h3><p>工作时间立即计时；非工作时间顺延到下个工作时段。</p></div>
         </div>
       </div>
     </section>
 
     <section id="boundary">
-      <div class="section-title">
-        <h2>最重要的边界：两个模块各管一件事</h2>
-        <p>这块建议评审时先讲清楚，否则后面很容易把“分配规则”和“掉库计时规则”混在一起。</p>
+      <div class="section-head">
+        <h2>模块边界</h2>
+        <p>分配模块和排班模块职责拆开，避免同一条线索被重复改写。</p>
       </div>
       <div class="grid-2">
         <div class="card">
           <span class="tag blue">分配模块</span>
-          <div class="headline">决定线索给哪个 CC</div>
-          <ul class="rule-list">
-            <li><span class="dot"></span><span>看渠道命中的分配策略、CC 权重、日上限、暂停分配状态。</span></li>
-            <li><span class="dot"></span><span>核心输出：一个明确的 CC 归属。</span></li>
-            <li><span class="dot"></span><span><b>不判断当前是否工作时间。</b></span></li>
-          </ul>
+          <div class="title">确定线索归属</div>
+          <p class="muted">输出结果是：这条线索归属于哪个 CC。判断依据是分配策略、CC 权重、日上限、暂停分配状态。</p>
+          <div class="divider"></div>
+          <div class="mini-card blue"><h3>不处理</h3><p>不判断该 CC 当前是否上班，也不决定首触倒计时从何时开始。</p></div>
         </div>
         <div class="card">
-          <span class="tag purple">排班模块</span>
-          <div class="headline">决定首触倒计时从什么时候开始</div>
-          <ul class="rule-list">
-            <li><span class="dot" style="background:var(--purple)"></span><span>线索已分配后，读取被分配 CC 的特殊排班与小组常规排班。</span></li>
-            <li><span class="dot" style="background:var(--purple)"></span><span>核心输出：立即计时 / 顺延到下个工作时段。</span></li>
-            <li><span class="dot" style="background:var(--purple)"></span><span><b>不改变线索已经分给谁。</b></span></li>
-          </ul>
+          <span class="tag purple">排班 / 计时模块</span>
+          <div class="title">确定计时开始时间</div>
+          <p class="muted">线索已进入某个 CC 私库后，再读取该 CC 的排班，决定首触倒计时立即开始还是顺延。</p>
+          <div class="divider"></div>
+          <div class="mini-card purple"><h3>不处理</h3><p>不把线索重新分给其他 CC；只影响这条线索在当前 CC 私库里的倒计时。</p></div>
         </div>
       </div>
     </section>
 
     <section id="allocation">
-      <div class="section-title">
-        <h2>需求一：Leads 轮次分配机制</h2>
-        <p>评审重点：权重怎么理解、谁会被跳过、什么时候进入下一轮。</p>
+      <div class="section-head">
+        <h2>需求一：轮次分配机制</h2>
+        <p>权重表示一个分配周期内的配额，系统按轮次逐个分配，避免高权重 CC 被连续塞满。</p>
       </div>
       <div class="grid-2">
         <div class="card">
-          <div class="callout">
-            <div class="icon">1</div>
-            <div><div class="strong-line">权重 = 一个周期内最多可分配的条数</div><p>例如 A:B:C = 3:2:1，一个周期共 6 条。每轮给未满额 CC 各分 1 条，满额后退出本周期。</p></div>
-          </div>
-          <div class="round-demo" style="margin-top:18px;">
-            <div>
-              <div class="headline">A:B:C = 3:2:1</div>
-              <div class="cc-list">
-                <div class="cc"><strong>CC-A</strong><span class="tag blue">权重 3</span><div class="chips"><span class="chip">1</span><span class="chip">4</span><span class="chip">6</span></div></div>
-                <div class="cc"><strong>CC-B</strong><span class="tag purple">权重 2</span><div class="chips"><span class="chip b">2</span><span class="chip b">5</span></div></div>
-                <div class="cc"><strong>CC-C</strong><span class="tag green">权重 1</span><div class="chips"><span class="chip c">3</span></div></div>
-              </div>
+          <span class="tag blue">示例</span>
+          <div class="title">A:B:C = 3:2:1</div>
+          <div class="round-box">
+            <div class="cc-grid">
+              <div class="cc"><strong>CC-A</strong><span class="tag blue">3 条</span></div>
+              <div class="cc"><strong>CC-B</strong><span class="tag purple">2 条</span></div>
+              <div class="cc"><strong>CC-C</strong><span class="tag green">1 条</span></div>
             </div>
-            <div>
-              <div class="headline">推荐理解成轮次分配</div>
-              <div class="sequence"><span class="chip">A</span><span class="chip b">B</span><span class="chip c">C</span><span class="chip">A</span><span class="chip b">B</span><span class="chip">A</span></div>
-              <p class="muted">结果满足 3:2:1，但不会一上来连续把线索都压给高权重 CC。</p>
+            <div class="mini-card">
+              <h3>一个周期共 6 条</h3>
+              <div class="seq"><span class="pill">A</span><span class="pill b">B</span><span class="pill c">C</span><span class="pill">A</span><span class="pill b">B</span><span class="pill">A</span></div>
+              <p class="muted" style="margin-top:12px;">最终满足 3:2:1，同时保持轮次分配的均衡感。</p>
             </div>
           </div>
         </div>
         <div class="card">
-          <div class="headline">分配判断表</div>
-          <div class="table-wrap">
-            <table>
-              <thead><tr><th>判断项</th><th>满足时</th><th>不满足时</th></tr></thead>
-              <tbody>
-                <tr><td>CC 是否暂停分配</td><td>继续判断</td><td>跳过该 CC</td></tr>
-                <tr><td>是否达到单渠道日上限</td><td>继续判断</td><td>跳过该 CC</td></tr>
-                <tr><td>本周期配额是否已满</td><td>未满则可分配</td><td>跳过该 CC</td></tr>
-                <tr><td>策略内是否还有可用 CC</td><td>分配成功</td><td>进入新注册队列并告警</td></tr>
-                <tr><td>策略配置发生变化</td><td>后续按新配置执行</td><td>当前周期建议清空重算</td></tr>
-              </tbody>
-            </table>
+          <span class="tag blue">判断顺序</span>
+          <div class="title">系统选择 CC 时依次判断</div>
+          <div class="decision-list">
+            <div class="decision"><div class="order">1</div><div><strong>是否暂停分配</strong><span>暂停时跳过该 CC。</span></div><span class="tag red">跳过</span></div>
+            <div class="decision"><div class="order">2</div><div><strong>是否达到单渠道日上限</strong><span>达到上限时不再继续分配该渠道线索。</span></div><span class="tag amber">跳过</span></div>
+            <div class="decision"><div class="order">3</div><div><strong>本周期配额是否已满</strong><span>权重配额用完后，等待下一周期。</span></div><span class="tag gray">满额</span></div>
+            <div class="decision"><div class="order">4</div><div><strong>是否存在可用 CC</strong><span>没有可用 CC 时，线索进入新注册队列并触发告警。</span></div><span class="tag green">分配</span></div>
           </div>
         </div>
       </div>
     </section>
 
     <section id="schedule">
-      <div class="section-title">
-        <h2>需求二：CC 排班识别与掉库计时</h2>
-        <p>评审重点：排班优先级、什么情况下立即计时、什么情况下顺延。</p>
+      <div class="section-head">
+        <h2>需求二：排班识别与计时</h2>
+        <p>特殊排班覆盖常规排班；没有特殊排班时，按小组常规排班判断。</p>
       </div>
-      <div class="grid-2">
-        <div class="card">
-          <div class="headline">排班命中优先级</div>
-          <div class="table-wrap">
-            <table>
-              <thead><tr><th>优先级</th><th>命中对象</th><th>处理结果</th></tr></thead>
-              <tbody>
-                <tr><td><span class="tag purple">最高</span></td><td>特殊排班：班</td><td>按工作时间处理，命中时段内入库立即启动倒计时。</td></tr>
-                <tr><td><span class="tag purple">最高</span></td><td>特殊排班：休</td><td>按非工作时间处理，倒计时顺延到下个有效工作时段。</td></tr>
-                <tr><td><span class="tag blue">其次</span></td><td>小组常规排班</td><td>未命中特殊排班时，按小组工作日/工作时段判断。</td></tr>
-                <tr><td><span class="tag neutral">兜底</span></td><td>未命中任何排班</td><td>按系统默认规则处理，直接开始倒计时。</td></tr>
-              </tbody>
-            </table>
+      <div class="card">
+        <div class="priority">
+          <div class="priority-card">
+            <div class="big" style="color:var(--purple)">1</div>
+            <h3>特殊排班：班 / 休</h3>
+            <p>优先级最高。临时加班视为工作时间；临时休息或节假日视为非工作时间。</p>
+          </div>
+          <div class="priority-card">
+            <div class="big" style="color:var(--blue)">2</div>
+            <h3>小组常规排班</h3>
+            <p>未命中特殊排班时，按小组配置的工作日和工作时段判断。</p>
+          </div>
+          <div class="priority-card">
+            <div class="big" style="color:var(--green)">3</div>
+            <h3>系统兜底</h3>
+            <p>未命中任何排班配置时，按默认规则处理，避免线索无法进入计时链路。</p>
           </div>
         </div>
-        <div class="card">
-          <div class="headline">计时规则一句话</div>
-          <div class="callout">
-            <div class="icon">2</div>
-            <div><div class="strong-line">只判断“开始时间”，开始后连续计时</div><p>工作时间入库：立即开始；非工作时间入库：顺延到下个工作时段开始。倒计时一旦启动，不因下班再次暂停。</p></div>
-          </div>
-          <ul class="rule-list">
-            <li><span class="dot" style="background:var(--purple)"></span><span>特殊排班用于处理临时加班、节假日、临时休息等例外。</span></li>
-            <li><span class="dot" style="background:var(--purple)"></span><span>小组常规排班用于定义默认工作日和工作时段。</span></li>
-            <li><span class="dot" style="background:var(--purple)"></span><span>排班只影响首触掉库计时，不影响线索已经分配给谁。</span></li>
-          </ul>
+        <div class="divider"></div>
+        <div class="grid-3">
+          <div class="mini-card green"><span class="tag green">工作时间</span><h3>立即开始</h3><p>Lead 入库时如果命中工作时间，首触倒计时立即启动。</p></div>
+          <div class="mini-card amber"><span class="tag amber">非工作时间</span><h3>顺延开始</h3><p>Lead 入库时如果是休息时段，倒计时顺延到下个工作时段。</p></div>
+          <div class="mini-card purple"><span class="tag purple">启动后</span><h3>连续计时</h3><p>倒计时一旦启动，不因后续下班或休息再次暂停。</p></div>
         </div>
       </div>
+    </section>
 
-      <div class="card" style="margin-top:18px;">
-        <div class="headline">4 个业务场景直接看结果</div>
-        <div class="scenario-grid">
-          <div class="scenario"><span class="tag green">工作时间</span><h3>工作时间入库</h3><p>Lead 进入 CC 私库后，立即启动首触倒计时。</p></div>
-          <div class="scenario"><span class="tag amber">非工作时间</span><h3>凌晨 / 休息日入库</h3><p>不立即计时，顺延到下个有效工作时段起点。</p></div>
-          <div class="scenario"><span class="tag purple">特殊班</span><h3>临时加班</h3><p>特殊排班为“班”时，覆盖常规排班，视为工作时间。</p></div>
-          <div class="scenario"><span class="tag red">特殊休</span><h3>临时休息 / 节假日</h3><p>特殊排班为“休”时，覆盖常规排班，视为非工作时间。</p></div>
+    <section id="scenarios">
+      <div class="section-head">
+        <h2>排班掉库场景示例</h2>
+        <p>用 4 个常见场景展示：什么时候立即计时，什么时候顺延计时。</p>
+      </div>
+      <div class="scenario-grid">
+        <div class="scenario">
+          <span class="tag green">场景 1</span>
+          <h3>工作时间入库</h3>
+          <p>周一 10:00，CC 所属小组工作时间为 09:00-18:00。</p>
+          <div class="result"><b>结果：</b>线索进入 CC 私库后，立即启动首触倒计时。</div>
+        </div>
+        <div class="scenario">
+          <span class="tag amber">场景 2</span>
+          <h3>非工作时间入库</h3>
+          <p>周一 22:30 入库，当前不在小组工作时段内。</p>
+          <div class="result"><b>结果：</b>暂不计时，顺延到下一个工作时段开始计时。</div>
+        </div>
+        <div class="scenario">
+          <span class="tag purple">场景 3</span>
+          <h3>特殊排班为「班」</h3>
+          <p>周日原本休息，但该 CC 所属小组配置了特殊加班。</p>
+          <div class="result"><b>结果：</b>特殊排班覆盖常规排班，视为工作时间，立即计时。</div>
+        </div>
+        <div class="scenario">
+          <span class="tag red">场景 4</span>
+          <h3>特殊排班为「休」</h3>
+          <p>周三原本工作，但当天配置了节假日或临时休息。</p>
+          <div class="result"><b>结果：</b>特殊排班覆盖常规排班，视为非工作时间，顺延计时。</div>
         </div>
       </div>
     </section>
 
     <section id="swimlane">
-      <div class="section-title">
-        <h2>联合泳道：业务动作和系统判断怎么衔接</h2>
-        <p>这张适合技术评审：一眼看清前端配置、后端分配、后端计时、用户结果之间的衔接点。</p>
+      <div class="section-head">
+        <h2>系统衔接</h2>
+        <p>从配置、分配到计时的系统分工。</p>
       </div>
-      <div class="card lane">
+      <div class="card swimlane">
         <div class="lane-row">
-          <div class="lane-title">业务 / 用户</div>
-          <div class="lane-cell"><h4>Lead 注册</h4><p>用户通过渠道进入。</p></div>
-          <div class="lane-cell empty"><h4>—</h4><p>无感知。</p></div>
-          <div class="lane-cell"><h4>进入 CC 私库</h4><p>等待 CC 首触。</p></div>
-          <div class="lane-cell empty"><h4>—</h4><p>无感知。</p></div>
-          <div class="lane-cell"><h4>超时掉库 / 正常首触</h4><p>根据首触结果流转。</p></div>
+          <div class="lane-title">配置</div>
+          <div class="lane-cell"><h4>分配策略</h4><p>渠道、CC 列表、权重。</p></div>
+          <div class="lane-cell"><h4>日上限 / 暂停</h4><p>控制 CC 是否可继续接收线索。</p></div>
+          <div class="lane-cell"><h4>小组排班</h4><p>配置常规工作日和工作时段。</p></div>
+          <div class="lane-cell"><h4>特殊排班</h4><p>配置临时班或临时休。</p></div>
         </div>
         <div class="lane-row">
-          <div class="lane-title">分配模块</div>
-          <div class="lane-cell"><h4>匹配策略</h4><p>按渠道找到策略。</p></div>
-          <div class="lane-cell"><h4>轮次选择 CC</h4><p>判断暂停、日上限、周期配额。</p></div>
-          <div class="lane-cell"><h4>写入归属</h4><p>线索分配动作完成。</p></div>
-          <div class="lane-cell empty"><h4>—</h4><p>不参与计时。</p></div>
-          <div class="lane-cell empty"><h4>—</h4><p>不处理掉库计时。</p></div>
+          <div class="lane-title">分配</div>
+          <div class="lane-cell"><h4>匹配策略</h4><p>根据线索来源找到分配策略。</p></div>
+          <div class="lane-cell"><h4>选择 CC</h4><p>按轮次、权重、上限、暂停状态判断。</p></div>
+          <div class="lane-cell"><h4>写入归属</h4><p>线索进入该 CC 私库。</p></div>
+          <div class="lane-cell empty"><h4>—</h4><p>不参与排班判断。</p></div>
         </div>
         <div class="lane-row">
-          <div class="lane-title">排班 / 计时模块</div>
+          <div class="lane-title">计时</div>
           <div class="lane-cell empty"><h4>—</h4><p>不参与分配。</p></div>
-          <div class="lane-cell empty"><h4>—</h4><p>不改变分配结果。</p></div>
-          <div class="lane-cell"><h4>读取 CC 排班</h4><p>特殊排班优先，小组排班其次。</p></div>
-          <div class="lane-cell"><h4>启动或顺延</h4><p>工作时间立即计时，非工作时间顺延。</p></div>
-          <div class="lane-cell"><h4>判断是否掉库</h4><p>到达全局首触时效后处理。</p></div>
-        </div>
-        <div class="lane-row">
-          <div class="lane-title">配置入口</div>
-          <div class="lane-cell"><h4>分配策略</h4><p>渠道、CC、权重、日上限。</p></div>
-          <div class="lane-cell"><h4>暂停分配</h4><p>控制是否继续分新 leads。</p></div>
-          <div class="lane-cell"><h4>排班配置</h4><p>小组常规排班。</p></div>
-          <div class="lane-cell"><h4>特殊排班</h4><p>临时班 / 临时休。</p></div>
-          <div class="lane-cell"><h4>首触时效</h4><p>全局掉库时间。</p></div>
+          <div class="lane-cell empty"><h4>—</h4><p>不改变 CC 归属。</p></div>
+          <div class="lane-cell"><h4>读取排班</h4><p>特殊排班优先，小组排班其次。</p></div>
+          <div class="lane-cell"><h4>启动 / 顺延</h4><p>生成首触倒计时开始时间。</p></div>
         </div>
       </div>
     </section>
 
-    <section id="review">
-      <div class="section-title">
-        <h2>明天评审只需要确认这些点</h2>
-        <p>把讨论收敛到可开发、可测试、可验收的关键问题。</p>
+    <section id="check">
+      <div class="section-head">
+        <h2>验收覆盖</h2>
+        <p>页面最后保留轻量检查点，方便业务、技术、测试对齐范围。</p>
       </div>
-      <div class="review-points">
-        <div class="point"><span class="tag blue">分配</span><h3>1. 权重口径</h3><p>分配比例是否统一理解为“周期配额”，以及配置变化后是否清空当前周期。</p></div>
-        <div class="point"><span class="tag blue">分配</span><h3>2. 跳过规则</h3><p>暂停分配、日上限、周期满额时是否均跳过该 CC；无可用 CC 是否进入新注册队列。</p></div>
-        <div class="point"><span class="tag purple">排班</span><h3>3. 排班范围</h3><p>本期是否只做小组常规排班 + 特殊排班，不做个人常规排班。</p></div>
-        <div class="point"><span class="tag purple">排班</span><h3>4. 计时启动</h3><p>工作时间立即启动，非工作时间顺延；启动后是否连续计时不暂停。</p></div>
-        <div class="point"><span class="tag amber">边界</span><h3>5. 两模块互不干预</h3><p>分配不看排班，排班不改归属。这个口径需要业务、研发、测试一致。</p></div>
-        <div class="point"><span class="tag green">验收</span><h3>6. 测试覆盖</h3><p>覆盖权重、日上限、暂停、特殊班/休、非工作时间顺延、未命中排班等组合场景。</p></div>
+      <div class="check-grid">
+        <div class="check"><span class="tag blue">分配</span><h3>权重与轮次</h3><p>覆盖 1:1、3:2:1、配置变更、周期切换等场景。</p></div>
+        <div class="check"><span class="tag blue">分配</span><h3>跳过规则</h3><p>覆盖暂停分配、日上限、配额满、无可用 CC。</p></div>
+        <div class="check"><span class="tag purple">排班</span><h3>优先级</h3><p>覆盖特殊班、特殊休、小组常规排班、未命中排班。</p></div>
+        <div class="check"><span class="tag purple">计时</span><h3>启动时间</h3><p>覆盖工作时间立即计时、非工作时间顺延、启动后连续计时。</p></div>
+        <div class="check"><span class="tag amber">边界</span><h3>归属不变</h3><p>排班只影响计时，不把线索改分给其他 CC。</p></div>
+        <div class="check"><span class="tag green">结果</span><h3>用户结果</h3><p>进入私库、倒计时开始时间、掉库结果均可追踪。</p></div>
       </div>
     </section>
 
-    <div class="footer">Generated for Haohao · Leads 联合评审可视化 HTML</div>
+    <div class="footer">Leads 分配与 CC 排班计时 · 联合评审可视化页</div>
   </div>
 </body>
 </html>
