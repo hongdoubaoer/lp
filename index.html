@@ -1,0 +1,651 @@
+
+html_content = '''<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户请假与休学需求评审</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background: #f5f7fa;
+            color: #1f2937;
+            line-height: 1.6;
+        }
+        .slide {
+            max-width: 1200px;
+            margin: 40px auto;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+            padding: 48px 56px;
+            page-break-after: always;
+        }
+        .slide-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .slide-subtitle {
+            font-size: 16px;
+            color: #6b7280;
+            margin-bottom: 32px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+            flex-shrink: 0;
+        }
+        .badge-blue { background: #3b82f6; }
+        .badge-green { background: #10b981; }
+        .badge-orange { background: #f59e0b; }
+        .badge-red { background: #ef4444; }
+        .badge-purple { background: #8b5cf6; }
+
+        /* 规则矩阵表格 */
+        .rule-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 15px;
+        }
+        .rule-table th {
+            background: #1e3a5f;
+            color: #fff;
+            padding: 14px 16px;
+            text-align: left;
+            font-weight: 600;
+        }
+        .rule-table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .rule-table tr:hover td { background: #f8fafc; }
+        .tag {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .tag-green { background: #d1fae5; color: #065f46; }
+        .tag-red { background: #fee2e2; color: #991b1b; }
+        .tag-yellow { background: #fef3c7; color: #92400e; }
+        .tag-blue { background: #dbeafe; color: #1e40af; }
+        .tag-gray { background: #f3f4f6; color: #4b5563; }
+
+        /* 功能卡片 */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 24px;
+        }
+        .feature-card {
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 24px;
+            transition: all 0.2s;
+        }
+        .feature-card:hover {
+            border-color: #3b82f6;
+            box-shadow: 0 4px 12px rgba(59,130,246,0.1);
+        }
+        .feature-card h3 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .feature-card p {
+            font-size: 14px;
+            color: #4b5563;
+            line-height: 1.8;
+        }
+        .feature-card ul {
+            margin-top: 10px;
+            padding-left: 18px;
+            font-size: 14px;
+            color: #4b5563;
+        }
+        .feature-card li {
+            margin-bottom: 6px;
+        }
+
+        /* 时间轴 */
+        .timeline {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 32px 0;
+            padding: 0 20px;
+        }
+        .timeline-item {
+            text-align: center;
+            flex: 1;
+            position: relative;
+        }
+        .timeline-item::after {
+            content: "";
+            position: absolute;
+            top: 20px;
+            right: -50%;
+            width: 100%;
+            height: 3px;
+            background: #e5e7eb;
+            z-index: 0;
+        }
+        .timeline-item:last-child::after { display: none; }
+        .timeline-dot {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 13px;
+            color: #fff;
+            margin: 0 auto 10px;
+            position: relative;
+            z-index: 1;
+        }
+        .timeline-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+        }
+        .timeline-desc {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+
+        /* 确认问题 */
+        .question-list {
+            margin-top: 20px;
+        }
+        .question-item {
+            background: #fff7ed;
+            border-left: 4px solid #f59e0b;
+            padding: 20px 24px;
+            margin-bottom: 16px;
+            border-radius: 0 10px 10px 0;
+        }
+        .question-item h4 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #92400e;
+            margin-bottom: 8px;
+        }
+        .question-item p {
+            font-size: 14px;
+            color: #78350f;
+            line-height: 1.7;
+        }
+        .question-item .sub-q {
+            margin-top: 8px;
+            padding-left: 16px;
+            border-left: 2px solid #fcd34d;
+        }
+
+        /* 高亮框 */
+        .highlight-box {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 10px;
+            padding: 20px 24px;
+            margin: 20px 0;
+        }
+        .highlight-box strong {
+            color: #1e40af;
+        }
+
+        /* 状态流 */
+        .flow-box {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 24px;
+            font-family: "SF Mono", monospace;
+            font-size: 13px;
+            line-height: 2;
+            color: #334155;
+            overflow-x: auto;
+            white-space: pre;
+        }
+
+        .cover {
+            text-align: center;
+            padding: 80px 56px;
+        }
+        .cover h1 {
+            font-size: 42px;
+            font-weight: 800;
+            color: #1a1a2e;
+            margin-bottom: 16px;
+        }
+        .cover .meta {
+            font-size: 16px;
+            color: #6b7280;
+            margin-bottom: 40px;
+        }
+        .cover .agenda {
+            display: inline-block;
+            text-align: left;
+            background: #f8fafc;
+            padding: 32px 48px;
+            border-radius: 16px;
+            font-size: 18px;
+            line-height: 2.2;
+        }
+        .cover .agenda li {
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .cover .agenda .num {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #3b82f6;
+            color: #fff;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        @media print {
+            .slide { margin: 0; box-shadow: none; border-radius: 0; }
+            body { background: #fff; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- 封面 -->
+<div class="slide cover">
+    <h1>用户请假与休学需求评审</h1>
+    <div class="meta">PRD V1.0 &nbsp;|&nbsp; 2026-07-29 &nbsp;|&nbsp; 产品负责人：冀昊昊</div>
+    <ul class="agenda">
+        <li><span class="num">1</span>核心规则总览：取消 / 请假 / 休学 / 扣课时</li>
+        <li><span class="num">2</span>功能一：学生侧与外教侧规则解耦</li>
+        <li><span class="num">3</span>功能二：商品包权益配置（请假 / 休学次数）</li>
+        <li><span class="num">4</span>功能三：LP 发起用户请假</li>
+        <li><span class="num">5</span>功能四：LP 发起用户休学</li>
+        <li><span class="num">6</span>待业务确认问题（重点讨论）</li>
+    </ul>
+</div>
+
+<!-- 核心规则总览 -->
+<div class="slide">
+    <div class="slide-title">
+        <span class="badge badge-blue">1</span>
+        核心规则总览
+    </div>
+    <div class="slide-subtitle">取消 / 请假 / 休学 / 扣课时 / 外教结算 —— 全场景矩阵</div>
+
+    <table class="rule-table">
+        <thead>
+            <tr>
+                <th style="width:14%">场景</th>
+                <th style="width:16%">距开课时间</th>
+                <th style="width:16%">学生是否扣课时</th>
+                <th style="width:16%">外教是否结算</th>
+                <th style="width:38%">说明</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>普通取消</strong></td>
+                <td><span class="tag tag-gray">> 24h</span></td>
+                <td><span class="tag tag-green">不扣课时</span></td>
+                <td><span class="tag tag-green">不结算</span></td>
+                <td>正常取消，双方都不受影响</td>
+            </tr>
+            <tr style="background:#eff6ff;">
+                <td><strong>LP 请假</strong></td>
+                <td><span class="tag tag-blue">2h ~ 24h</span></td>
+                <td><span class="tag tag-green">不扣课时</span></td>
+                <td><span class="tag tag-green">不结算</span></td>
+                <td>消耗请假权益，双方都不受影响 <strong>（本期新增）</strong></td>
+            </tr>
+            <tr>
+                <td><strong>临近取消（未请假）</strong></td>
+                <td><span class="tag tag-yellow">2h ~ 24h</span></td>
+                <td><span class="tag tag-red">扣课时</span></td>
+                <td><span class="tag tag-green">不结算</span></td>
+                <td>学生承担课时损失，外教不结算</td>
+            </tr>
+            <tr>
+                <td><strong>临时取消</strong></td>
+                <td><span class="tag tag-yellow">1h ~ 2h</span></td>
+                <td><span class="tag tag-red">扣课时</span></td>
+                <td><span class="tag tag-green">不结算</span></td>
+                <td>不可请假，学生扣课时，外教不结算</td>
+            </tr>
+            <tr>
+                <td><strong>超临时取消/缺席</strong></td>
+                <td><span class="tag tag-red">≤ 1h</span></td>
+                <td><span class="tag tag-red">扣课时</span></td>
+                <td><span class="tag tag-red">结算</span></td>
+                <td>学生扣课时，外教工资照发</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="highlight-box">
+        <strong>核心变化：</strong>学生侧扣课时阈值（24h）与外教侧结算阈值（1h）彻底解耦，两套规则独立运行，互不干扰。
+    </div>
+</div>
+
+<!-- 功能一 -->
+<div class="slide">
+    <div class="slide-title">
+        <span class="badge badge-green">2</span>
+        功能一：学生侧与外教侧规则解耦
+    </div>
+    <div class="slide-subtitle">将「学生课时扣减」与「外教工资结算」拆分为两个独立判断逻辑</div>
+
+    <div class="timeline">
+        <div class="timeline-item">
+            <div class="timeline-dot" style="background:#10b981;">>24h</div>
+            <div class="timeline-label">普通取消</div>
+            <div class="timeline-desc">学生不扣课时<br>外教不结算</div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-dot" style="background:#3b82f6;">2-24h</div>
+            <div class="timeline-label">请假窗口</div>
+            <div class="timeline-desc">LP可办理请假<br>不扣课时不结算</div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-dot" style="background:#f59e0b;">1-2h</div>
+            <div class="timeline-label">临时取消</div>
+            <div class="timeline-desc">学生扣课时<br>外教不结算</div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-dot" style="background:#ef4444;">≤1h</div>
+            <div class="timeline-label">超临时/缺席</div>
+            <div class="timeline-desc">学生扣课时<br>外教结算工资</div>
+        </div>
+    </div>
+
+    <div class="feature-grid">
+        <div class="feature-card">
+            <h3>🎓 学生侧扣课时判断</h3>
+            <ul>
+                <li>触发条件：距开课 ≤ 24h 且<strong>非请假成功</strong></li>
+                <li>结果：扣减学生课时</li>
+                <li>与外教侧逻辑完全独立</li>
+            </ul>
+        </div>
+        <div class="feature-card">
+            <h3>👨‍🏫 外教侧结算判断</h3>
+            <ul>
+                <li>触发条件：距开课 ≤ 1h 且学生取消/缺席</li>
+                <li>结果：结算外教工资</li>
+                <li>与学生侧逻辑完全独立</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="highlight-box" style="margin-top:24px;">
+        <strong>关键结论：</strong>学生扣了课时，外教不一定结算；外教结算了，学生一定扣了课时（因为 ≤1h 必然也 ≤24h）。
+    </div>
+</div>
+
+<!-- 功能二 -->
+<div class="slide">
+    <div class="slide-title">
+        <span class="badge badge-orange">3</span>
+        功能二：商品包权益配置
+    </div>
+    <div class="slide-subtitle">在商品包维度配置请假次数与休学次数，购课后自动生成用户权益</div>
+
+    <div class="feature-grid">
+        <div class="feature-card">
+            <h3>📍 页面位置</h3>
+            <p>产品中心 → 商品包管理2.0 → 新增/编辑商品包</p>
+        </div>
+        <div class="feature-card">
+            <h3>➕ 新增字段</h3>
+            <ul>
+                <li><strong>请假次数</strong>：数字输入框，默认0，仅允许 ≥0 整数</li>
+                <li><strong>休学次数</strong>：数字输入框，默认0，仅允许 ≥0 整数</li>
+            </ul>
+        </div>
+        <div class="feature-card">
+            <h3>📐 字段说明</h3>
+            <ul>
+                <li>配置为0 = 该商品包不提供对应权益</li>
+                <li>每成功使用一次，扣减1次</li>
+                <li>用户购买后按当时配置生成权益额度</li>
+            </ul>
+        </div>
+        <div class="feature-card">
+            <h3>⚠️ 待确认</h3>
+            <ul>
+                <li>存量商品包是否需要补配置？</li>
+                <li>已购用户权益是否随商品包修改而变更？</li>
+                <li>已上线商品包是否允许修改次数？</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- 功能三 -->
+<div class="slide">
+    <div class="slide-title">
+        <span class="badge badge-purple">4</span>
+        功能三：LP 发起用户请假
+    </div>
+    <div class="slide-subtitle">学生详情 → 课程列表 → 操作列新增「请假」按钮</div>
+
+    <table class="rule-table" style="margin-bottom:24px;">
+        <thead>
+            <tr>
+                <th>距开课时间</th>
+                <th>取消预约按钮</th>
+                <th>请假按钮</th>
+                <th>说明</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><span class="tag tag-gray">> 24h</span></td>
+                <td><span class="tag tag-green">展示</span></td>
+                <td><span class="tag tag-red">不展示</span></td>
+                <td>未到请假窗口，LP可直接取消（不扣课时）</td>
+            </tr>
+            <tr style="background:#eff6ff;">
+                <td><span class="tag tag-blue">2h ~ 24h</span></td>
+                <td><span class="tag tag-green">展示</span></td>
+                <td><span class="tag tag-green">展示（有次数时）</span></td>
+                <td>两按钮并存；LP可选择「请假」（不扣课时）或「取消」（扣课时）</td>
+            </tr>
+            <tr>
+                <td><span class="tag tag-red">< 2h</span></td>
+                <td><span class="tag tag-green">展示</span></td>
+                <td><span class="tag tag-red">不展示</span></td>
+                <td>已过请假窗口，LP仅可取消（扣课时）</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="feature-grid">
+        <div class="feature-card">
+            <h3>✅ 请假成功处理</h3>
+            <ul>
+                <li>扣减对应商品包请假次数 1 次</li>
+                <li>学生不扣课时</li>
+                <li>课程状态更新为 <strong>LEAVE</strong></li>
+            </ul>
+        </div>
+        <div class="feature-card">
+            <h3>👁️ 状态展示</h3>
+            <ul>
+                <li>LP管台课程列表：展示「LEAVE」状态标签</li>
+                <li>课时进度：新增「请假」「休学」列，数值+1</li>
+                <li>C端课程列表：同步展示「已请假」</li>
+            </ul>
+        </div>
+        <div class="feature-card">
+            <h3>🛡️ 兜底校验（提交时）</h3>
+            <ul>
+                <li>课程状态仍为 BOOKED 且未开始</li>
+                <li>当前时间仍在 2～24h 时间窗内</li>
+                <li>用户剩余请假次数仍 > 0</li>
+            </ul>
+        </div>
+        <div class="feature-card">
+            <h3>📝 操作日志</h3>
+            <p style="font-family:monospace;font-size:12px;background:#f3f4f6;padding:8px;border-radius:6px;">
+                LP请假,课程Id:1825156,课包Id:7890,<br>时间:2026-08-15 20:00,请假次数:3→2
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- 功能四 -->
+<div class="slide">
+    <div class="slide-title">
+        <span class="badge badge-red">5</span>
+        功能四：LP 发起用户休学
+    </div>
+    <div class="slide-subtitle">家长管理 → 操作列新增「休学」按钮，以自然月为边界</div>
+
+    <div class="feature-grid">
+        <div class="feature-card">
+            <h3>📍 入口与权限</h3>
+            <ul>
+                <li>入口：家长管理 → 目标用户行 → 操作列「休学」</li>
+                <li>仅 LP 或具备权限的管台角色可操作</li>
+                <li>家长端不开放自助休学入口</li>
+            </ul>
+        </div>
+        <div class="feature-card">
+            <h3>📅 日期规则</h3>
+            <ul>
+                <li>以<strong>自然月</strong>为边界，起止日期必须在同一个月内</li>
+                <li>不支持跨自然月</li>
+                <li>开始日期不可早于当前日期</li>
+                <li>不允许<strong>连续两个月</strong>休学</li>
+            </ul>
+        </div>
+        <div class="feature-card">
+            <h3>✅ 休学成功处理</h3>
+            <ul>
+                <li>扣减对应商品包休学次数 1 次</li>
+                <li>用户在休学月份内暂停学习安排</li>
+                <li>休学结束后自动恢复正常</li>
+            </ul>
+        </div>
+        <div class="feature-card">
+            <h3>🛡️ 提交兜底校验</h3>
+            <ul>
+                <li>用户仍存在有效在读商品包</li>
+                <li>当前商品包剩余休学次数 > 0</li>
+                <li>日期合法、不跨月、不与已有记录重叠/连续</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="highlight-box" style="margin-top:20px;">
+        <strong>多课包场景：</strong>用户同时购买课包A和课包B，LP只给课包A办休学 → 仅课包A暂停，课包B正常上课。（待业务确认）
+    </div>
+</div>
+
+<!-- 待确认问题 -->
+<div class="slide">
+    <div class="slide-title">
+        <span class="badge badge-red">6</span>
+        待业务确认问题
+    </div>
+    <div class="slide-subtitle">以下问题需要业务侧明确决策，本期重点讨论</div>
+
+    <div class="question-list">
+        <div class="question-item">
+            <h4>📌 问题1：休学期间已排课程如何处理？</h4>
+            <p>用户已休学8月1~31日，但8月10日原本有一节已预约（BOOKED）的课。</p>
+            <div class="sub-q">
+                <p><strong>休学成功后，这节已预约的课是系统自动取消，还是LP手动处理？</strong></p>
+            </div>
+        </div>
+
+        <div class="question-item">
+            <h4>📌 问题2：多课包场景的处理方式</h4>
+            <p>用户同时买了「课包A」和「课包B」，两个都在读、都在排课。LP只给「课包A」办了休学。</p>
+            <div class="sub-q">
+                <p><strong>是否认可：休学只影响所选课包，课包A休学（不能约、已排课取消），课包B正常（可以约、正常上课）？</strong></p>
+            </div>
+        </div>
+
+        <div class="question-item">
+            <h4>📌 问题3：存量商品包与权益配置</h4>
+            <div class="sub-q">
+                <p>• 存量课包没有配置休学&请假次数，是否需要补配置？还是仅新建课包需要配置？</p>
+                <p>• 商品包的请假/休学次数配置修改后，已购用户的权益是否跟着变？</p>
+                <p>• 已上线的商品包，是否允许修改请假次数、休学次数？</p>
+            </div>
+        </div>
+
+        <div class="question-item">
+            <h4>📌 问题4：休学能否提前取消/撤销？</h4>
+            <div class="sub-q">
+                <p><strong>用户临时改变计划，LP是否可以撤销已提交的休学？</strong> 可以 / 不可以（一旦提交不可撤回）</p>
+            </div>
+        </div>
+
+        <div class="question-item">
+            <h4>📌 问题5：展示与通知</h4>
+            <div class="sub-q">
+                <p>• 未来日期休学是否在列表展示「待休学」标签？</p>
+                <p>• 请假/休学成功后是否需要给家长发送站内信、短信或服务通知？</p>
+            </div>
+        </div>
+
+        <div class="question-item">
+            <h4>📌 问题6：当天休学的已排课/已上课怎么处理？</h4>
+            <p>假设今天8月20日，LP办8月20~31日休学：</p>
+            <div class="sub-q">
+                <p>• 今天已经上完的课（8月20日10:00）—— 保留，不回滚</p>
+                <p>• 今天还没上的课（8月20日16:00）—— <strong>取消/暂停？判断逻辑和请假&取消课一致？</strong></p>
+            </div>
+        </div>
+
+        <div class="question-item">
+            <h4>📌 问题7：权限配置</h4>
+            <div class="sub-q">
+                <p>• 哪些管台角色具备请假/休学权限？</p>
+                <p>• 是否需要单独权限点控制？</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>'''
+
+with open('/mnt/agents/output/请假休学需求评审_会议展示.html', 'w', encoding='utf-8') as f:
+    f.write(html_content)
+
+print("文件已生成")
