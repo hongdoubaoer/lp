@@ -1,4 +1,4 @@
-html_content = '''<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -515,7 +515,7 @@ html_content = '''<!DOCTYPE html>
                     </div>
                     <div class="rule-item orange">
                         <div class="rule-label">功能三</div>
-                        <div class="rule-text"><strong>LP 发起用户请假</strong><br>学生详情 → 课程列表 → 操作列新增「请假」按钮，课前2~24h可操作</div>
+                        <div class="rule-text"><strong>LP 发起用户请假</strong><br>学生详情 → 课程列表 → 操作列展示「请假」按钮，按钮常显可点；点击后按时间窗口和剩余次数判断能否办理</div>
                     </div>
                     <div class="rule-item purple">
                         <div class="rule-label">功能四</div>
@@ -546,10 +546,10 @@ html_content = '''<!DOCTYPE html>
                     <div class="timeline-item">
                         <div class="timeline-dot blue"></div>
                         <div class="timeline-content blue">
-                            <div class="timeline-title">2h ~ 24h · 请假窗口（本期新增）</div>
+                            <div class="timeline-title">2h ~ 24h · 可办理请假</div>
                             <div class="timeline-desc">
-                                LP可办理请假 → 学生不扣课时 · 外教不结算 · 消耗1次请假权益<br>
-                                若未请假直接取消 → 学生扣课时 · 外教不结算
+                                有剩余请假次数：LP确认请假 → 学生不扣课时 · 外教不结算 · 消耗1次请假权益<br>
+                                无剩余请假次数：点击「请假」后提示次数已用完；若直接取消 → 学生扣课时 · 外教不结算
                             </div>
                         </div>
                     </div>
@@ -557,9 +557,9 @@ html_content = '''<!DOCTYPE html>
                     <div class="timeline-item">
                         <div class="timeline-dot orange"></div>
                         <div class="timeline-content orange">
-                            <div class="timeline-title">1h ~ 2h · 临时取消</div>
+                            <div class="timeline-title">1h ~ 2h · 已超出请假时间</div>
                             <div class="timeline-desc">
-                                不可请假 · 学生扣课时 · 外教不结算
+                                「请假」仍展示可点，但点击后提示已小于2小时，无法发起请假；如取消 → 学生扣课时 · 外教不结算
                             </div>
                         </div>
                     </div>
@@ -664,39 +664,70 @@ html_content = '''<!DOCTYPE html>
         <!-- LP请假 -->
         <div id="panel-leave" class="panel">
             <div class="card">
-                <h3 class="card-title">📝 学生详情 → 课程列表 → 操作列按钮显隐规则</h3>
+                <h3 class="card-title">📝 学生详情 → 课程列表 →「请假」按钮点击规则</h3>
+                <div class="highlight-box" style="margin-bottom:16px;">
+                    <strong>核心口径：</strong>请假按钮不再按时间窗口或剩余次数隐藏。只要 LP 有权限且课程可操作，「请假」始终展示且可点击；点击后再判断能否办理。
+                </div>
                 <table class="btn-rule-table">
                     <thead>
                         <tr>
-                            <th>距开课时间</th>
+                            <th>距开课时间 / 权益</th>
                             <th>取消预约</th>
-                            <th>请假</th>
-                            <th style="text-align:left">说明</th>
+                            <th>请假按钮</th>
+                            <th style="text-align:left">点击「请假」后的结果</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
                             <td><span class="tag tag-gray">> 24h</span></td>
                             <td><span class="tag tag-green">✅ 展示</span></td>
-                            <td><span class="tag tag-red">❌ 不展示</span></td>
-                            <td style="text-align:left">未到请假窗口，LP可直接取消（不扣课时）</td>
+                            <td><span class="tag tag-green">✅ 展示，可点击</span></td>
+                            <td style="text-align:left">弹窗提示：当前距开课超过24小时，无需请假，可直接取消预约；取消不扣课时、不消耗请假次数</td>
                         </tr>
                         <tr style="background:#eff6ff;">
-                            <td><span class="tag tag-blue">2h ~ 24h</span></td>
+                            <td><span class="tag tag-blue">2h ~ 24h</span><br><span class="tag tag-green" style="margin-top:6px;">剩余次数 > 0</span></td>
                             <td><span class="tag tag-green">✅ 展示</span></td>
-                            <td><span class="tag tag-green">✅ 展示（有次数时）</span></td>
-                            <td style="text-align:left">两按钮并存；LP可选择「请假」（不扣课时）或「取消」（扣课时）</td>
+                            <td><span class="tag tag-green">✅ 展示，可点击</span></td>
+                            <td style="text-align:left">进入请假确认弹窗；确认后不扣学生课时，消耗 1 次请假次数</td>
+                        </tr>
+                        <tr>
+                            <td><span class="tag tag-blue">2h ~ 24h</span><br><span class="tag tag-red" style="margin-top:6px;">剩余次数 = 0</span></td>
+                            <td><span class="tag tag-green">✅ 展示</span></td>
+                            <td><span class="tag tag-green">✅ 展示，可点击</span></td>
+                            <td style="text-align:left">弹窗提示：当前课包请假次数已用完，无法发起请假；如继续取消预约，将按规则扣减学生课时</td>
                         </tr>
                         <tr>
                             <td><span class="tag tag-red">< 2h</span></td>
                             <td><span class="tag tag-green">✅ 展示</span></td>
-                            <td><span class="tag tag-red">❌ 不展示</span></td>
-                            <td style="text-align:left">已过请假窗口，LP仅可取消（扣课时）</td>
+                            <td><span class="tag tag-green">✅ 展示，可点击</span></td>
+                            <td style="text-align:left">弹窗提示：已小于2小时，超出请假时间范围，无法发起请假；如取消将扣减学生课时</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
-            
+
+            <div class="card">
+                <h3 class="card-title">🖱️ 点击「请假」后的弹窗状态</h3>
+                <div class="rule-grid">
+                    <div class="rule-item gray">
+                        <div class="rule-label">>24h</div>
+                        <div class="rule-text"><strong>无需请假提示</strong><br>当前距开课超过24小时，无需请假，可直接取消预约。取消后不扣学生课时，也不消耗请假次数。</div>
+                    </div>
+                    <div class="rule-item blue">
+                        <div class="rule-label">2~24h 且有次数</div>
+                        <div class="rule-text"><strong>请假确认弹窗</strong><br>展示课程信息、剩余请假次数、本次消耗 1 次；LP 点击确认后提交请假。</div>
+                    </div>
+                    <div class="rule-item red">
+                        <div class="rule-label">2~24h 但次数=0</div>
+                        <div class="rule-text"><strong>次数用完提示</strong><br>当前课包请假次数已用完，无法发起请假。如继续取消预约，将按规则扣减学生课时。</div>
+                    </div>
+                    <div class="rule-item orange">
+                        <div class="rule-label"><2h</div>
+                        <div class="rule-text"><strong>超出时间提示</strong><br>当前距离开课已小于2小时，超出请假时间范围，无法发起请假。如取消预约，将扣减学生课时。</div>
+                    </div>
+                </div>
+            </div>
+
             <div class="two-col">
                 <div class="card">
                     <h3 class="card-title">✅ 请假成功处理</h3>
@@ -737,7 +768,7 @@ html_content = '''<!DOCTYPE html>
             </div>
             
             <div class="card">
-                <h3 class="card-title">🛡️ 提交时兜底校验（防并发）</h3>
+                <h3 class="card-title">🛡️ 确认请假提交时兜底校验（防并发）</h3>
                 <table class="rule-table">
                     <thead>
                         <tr>
@@ -911,9 +942,4 @@ html_content = '''<!DOCTYPE html>
         }
     </script>
 </body>
-</html>'''
-
-with open('/mnt/agents/output/请假休学需求评审_会议展示.html', 'w', encoding='utf-8') as f:
-    f.write(html_content)
-
-print("✅ 文件已生成")
+</html>
