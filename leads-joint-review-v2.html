@@ -301,49 +301,13 @@
     <header class="hero">
       <div class="eyebrow">Leads Center · Product Review</div>
       <h1>Leads 分配与<br/>CC 排班计时</h1>
-      <p>本次需求围绕一条新线索进入系统后的两个关键问题：先确定“分给哪个 CC”，再确定“首触倒计时从什么时候开始”。</p>
+      <p>本次需求围绕一条新线索进入系统后的两个关键问题：确定“分给CC的顺序”，确定“首触倒计时从什么时候开始”。</p>
       <div class="summary">
-        <div class="summary-card"><strong>需求背景</strong><span>现在线索分配与排班计时容易被混在一起，导致业务解释、技术实现和测试口径不一致。</span></div>
-        <div class="summary-card"><strong>功能一：轮次分配</strong><span>按分配策略、权重、日上限、暂停状态，决定新线索进入哪个 CC 私库。</span></div>
-        <div class="summary-card"><strong>功能二：排班计时</strong><span>读取 CC 所属小组排班，决定首触倒计时立即开始还是顺延开始。</span></div>
+        <div class="summary-card"><strong>需求背景</strong><span>现在线索分配顺序是按照最大公约数轮询；现有掉库倒计时不感应排班，适配性差。</span></div>
+        <div class="summary-card"><strong>功能一：轮次分配</strong><span>实现轮次分配机制：每轮给配额未满的CC各分1条。</span></div>
+        <div class="summary-card"><strong>功能二：排班计时</strong><span>读取CC排班，决定首触倒计时立即开始还是顺延开始。</span></div>
       </div>
     </header>
-
-    <nav class="nav">
-      <div class="nav-inner">
-        <a href="#background">需求背景</a>
-        <a href="#scope">本次功能</a>
-        <a href="#flow">完整链路</a>
-        <a href="#boundary">模块边界</a>
-        <a href="#allocation">轮次分配</a>
-        <a href="#schedule">排班优先级</a>
-        <a href="#scenarios">掉库场景</a>
-      </div>
-    </nav>
-
-    <section id="background">
-      <div class="section-head">
-        <h2>需求背景</h2>
-        <p>新线索进入系统后，业务最关心两个结果：归属是否公平、首触是否及时。本次需求就是把这两个判断拆清楚。</p>
-      </div>
-      <div class="grid-3">
-        <div class="card">
-          <span class="tag blue">问题 1</span>
-          <div class="title">线索归属需要更可控</div>
-          <p class="muted">不同 CC 的承接能力不同，需要支持按权重轮次分配，同时受日上限、暂停分配等条件约束。</p>
-        </div>
-        <div class="card">
-          <span class="tag purple">问题 2</span>
-          <div class="title">首触计时需要结合排班</div>
-          <p class="muted">线索进入 CC 私库后，不能简单按入库时间开始倒计时，需要识别当前是否处于该 CC 的工作时间。</p>
-        </div>
-        <div class="card">
-          <span class="tag green">目标</span>
-          <div class="title">分配和计时各司其职</div>
-          <p class="muted">分配模块决定线索归属；排班模块只决定倒计时开始时间，不改变已经确定的 CC 归属。</p>
-        </div>
-      </div>
-    </section>
 
     <section id="scope">
       <div class="section-head">
