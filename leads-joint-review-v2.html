@@ -299,27 +299,78 @@
 <body>
   <div class="shell">
     <header class="hero">
-      <div class="eyebrow">Leads Center · Visual Review</div>
+      <div class="eyebrow">Leads Center · Product Review</div>
       <h1>Leads 分配与<br/>CC 排班计时</h1>
-      <p>线索先完成分配，确定归属 CC；再读取该 CC 的排班，决定首触倒计时立即开始还是顺延。</p>
+      <p>本次需求围绕一条新线索进入系统后的两个关键问题：先确定“分给哪个 CC”，再确定“首触倒计时从什么时候开始”。</p>
       <div class="summary">
-        <div class="summary-card"><strong>分配机制</strong><span>解决“线索分给谁”：按策略、权重、日上限、暂停状态判断。</span></div>
-        <div class="summary-card"><strong>排班计时</strong><span>解决“什么时候开始计时”：特殊排班优先，其次小组常规排班。</span></div>
-        <div class="summary-card"><strong>模块边界</strong><span>排班不改变 CC 归属，只影响已分配线索的首触倒计时。</span></div>
+        <div class="summary-card"><strong>需求背景</strong><span>现在线索分配与排班计时容易被混在一起，导致业务解释、技术实现和测试口径不一致。</span></div>
+        <div class="summary-card"><strong>功能一：轮次分配</strong><span>按分配策略、权重、日上限、暂停状态，决定新线索进入哪个 CC 私库。</span></div>
+        <div class="summary-card"><strong>功能二：排班计时</strong><span>读取 CC 所属小组排班，决定首触倒计时立即开始还是顺延开始。</span></div>
       </div>
     </header>
 
     <nav class="nav">
       <div class="nav-inner">
+        <a href="#background">需求背景</a>
+        <a href="#scope">本次功能</a>
         <a href="#flow">完整链路</a>
         <a href="#boundary">模块边界</a>
         <a href="#allocation">轮次分配</a>
         <a href="#schedule">排班优先级</a>
         <a href="#scenarios">掉库场景</a>
-        <a href="#swimlane">系统衔接</a>
-        <a href="#check">验收覆盖</a>
       </div>
     </nav>
+
+    <section id="background">
+      <div class="section-head">
+        <h2>需求背景</h2>
+        <p>新线索进入系统后，业务最关心两个结果：归属是否公平、首触是否及时。本次需求就是把这两个判断拆清楚。</p>
+      </div>
+      <div class="grid-3">
+        <div class="card">
+          <span class="tag blue">问题 1</span>
+          <div class="title">线索归属需要更可控</div>
+          <p class="muted">不同 CC 的承接能力不同，需要支持按权重轮次分配，同时受日上限、暂停分配等条件约束。</p>
+        </div>
+        <div class="card">
+          <span class="tag purple">问题 2</span>
+          <div class="title">首触计时需要结合排班</div>
+          <p class="muted">线索进入 CC 私库后，不能简单按入库时间开始倒计时，需要识别当前是否处于该 CC 的工作时间。</p>
+        </div>
+        <div class="card">
+          <span class="tag green">目标</span>
+          <div class="title">分配和计时各司其职</div>
+          <p class="muted">分配模块决定线索归属；排班模块只决定倒计时开始时间，不改变已经确定的 CC 归属。</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="scope">
+      <div class="section-head">
+        <h2>本次功能</h2>
+        <p>本次一起评审两个能力：一个负责“分给谁”，一个负责“什么时候开始计时”。</p>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <span class="tag blue">功能一</span>
+          <div class="title">Leads 轮次分配机制</div>
+          <div class="decision-list">
+            <div class="decision"><div class="order">1</div><div><strong>按策略匹配 CC 池</strong><span>根据渠道、来源等条件找到对应分配策略。</span></div><span class="tag blue">匹配</span></div>
+            <div class="decision"><div class="order">2</div><div><strong>按权重轮次分配</strong><span>权重代表周期内配额，例如 3:2:1。</span></div><span class="tag green">轮次</span></div>
+            <div class="decision"><div class="order">3</div><div><strong>跳过不可用 CC</strong><span>暂停分配、达到日上限、周期配额满时跳过。</span></div><span class="tag amber">约束</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <span class="tag purple">功能二</span>
+          <div class="title">CC 排班识别与掉库计时</div>
+          <div class="decision-list">
+            <div class="decision"><div class="order">1</div><div><strong>识别当前排班</strong><span>特殊排班优先，其次小组常规排班。</span></div><span class="tag purple">排班</span></div>
+            <div class="decision"><div class="order">2</div><div><strong>决定计时开始时间</strong><span>工作时间立即开始；非工作时间顺延到下个工作时段。</span></div><span class="tag green">计时</span></div>
+            <div class="decision"><div class="order">3</div><div><strong>启动后连续计时</strong><span>倒计时启动后，不因后续下班或休息再次暂停。</span></div><span class="tag blue">连续</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
 
     <section id="flow">
       <div class="section-head">
@@ -460,52 +511,7 @@
       </div>
     </section>
 
-    <section id="swimlane">
-      <div class="section-head">
-        <h2>系统衔接</h2>
-        <p>从配置、分配到计时的系统分工。</p>
-      </div>
-      <div class="card swimlane">
-        <div class="lane-row">
-          <div class="lane-title">配置</div>
-          <div class="lane-cell"><h4>分配策略</h4><p>渠道、CC 列表、权重。</p></div>
-          <div class="lane-cell"><h4>日上限 / 暂停</h4><p>控制 CC 是否可继续接收线索。</p></div>
-          <div class="lane-cell"><h4>小组排班</h4><p>配置常规工作日和工作时段。</p></div>
-          <div class="lane-cell"><h4>特殊排班</h4><p>配置临时班或临时休。</p></div>
-        </div>
-        <div class="lane-row">
-          <div class="lane-title">分配</div>
-          <div class="lane-cell"><h4>匹配策略</h4><p>根据线索来源找到分配策略。</p></div>
-          <div class="lane-cell"><h4>选择 CC</h4><p>按轮次、权重、上限、暂停状态判断。</p></div>
-          <div class="lane-cell"><h4>写入归属</h4><p>线索进入该 CC 私库。</p></div>
-          <div class="lane-cell empty"><h4>—</h4><p>不参与排班判断。</p></div>
-        </div>
-        <div class="lane-row">
-          <div class="lane-title">计时</div>
-          <div class="lane-cell empty"><h4>—</h4><p>不参与分配。</p></div>
-          <div class="lane-cell empty"><h4>—</h4><p>不改变 CC 归属。</p></div>
-          <div class="lane-cell"><h4>读取排班</h4><p>特殊排班优先，小组排班其次。</p></div>
-          <div class="lane-cell"><h4>启动 / 顺延</h4><p>生成首触倒计时开始时间。</p></div>
-        </div>
-      </div>
-    </section>
-
-    <section id="check">
-      <div class="section-head">
-        <h2>验收覆盖</h2>
-        <p>页面最后保留轻量检查点，方便业务、技术、测试对齐范围。</p>
-      </div>
-      <div class="check-grid">
-        <div class="check"><span class="tag blue">分配</span><h3>权重与轮次</h3><p>覆盖 1:1、3:2:1、配置变更、周期切换等场景。</p></div>
-        <div class="check"><span class="tag blue">分配</span><h3>跳过规则</h3><p>覆盖暂停分配、日上限、配额满、无可用 CC。</p></div>
-        <div class="check"><span class="tag purple">排班</span><h3>优先级</h3><p>覆盖特殊班、特殊休、小组常规排班、未命中排班。</p></div>
-        <div class="check"><span class="tag purple">计时</span><h3>启动时间</h3><p>覆盖工作时间立即计时、非工作时间顺延、启动后连续计时。</p></div>
-        <div class="check"><span class="tag amber">边界</span><h3>归属不变</h3><p>排班只影响计时，不把线索改分给其他 CC。</p></div>
-        <div class="check"><span class="tag green">结果</span><h3>用户结果</h3><p>进入私库、倒计时开始时间、掉库结果均可追踪。</p></div>
-      </div>
-    </section>
-
-    <div class="footer">Leads 分配与 CC 排班计时 · 联合评审可视化页</div>
+    <div class="footer">Leads 分配与 CC 排班计时 · 可视化评审页</div>
   </div>
 </body>
 </html>
