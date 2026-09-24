@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>虎校 LP 管台原型 Demo</title>
+  <style>
+    :root {
+      --primary: #1677ff;
+      --primary-hover: #4096ff;
+      --success: #12a66a;
+      --warning: #f59e0b;
+      --danger: #e5484d;
+      --purple: #7c3aed;
+      --text: #1f2329;
+      --sub-text: #646a73;
+      --muted: #8f959e;
+      --line: #e5e6eb;
+      --bg: #f5f7fa;
+      --card: #ffffff;
+      --sidebar: #101828;
+      --sidebar-active: #1d2939;
+      --blue-bg: #e8f3ff;
+      --green-bg: #f0f9eb;
+      --orange-bg: #fff7e6;
+      --red-bg: #fff1f0;
+      --purple-bg: #f3ecff;
+      --gray-bg: #f2f3f5;
+      --shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 8px 24px rgba(16, 24, 40, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      font-size: 14px;
+    }
+    button, input, select, textarea { font-family: inherit; }
+    .layout { display: flex; min-height: 100vh; }
+    .sidebar { width: 232px; background: var(--sidebar); color: rgba(255,255,255,.82); flex-shrink: 0; position: sticky; top: 0; height: 100vh; overflow: auto; }
+    .brand { height: 58px; display:flex; align-items:center; padding: 0 20px; border-bottom: 1px solid rgba(255,255,255,.08); color: #fff; font-weight: 700; }
+    .brand-icon { width: 30px; height: 30px; border-radius: 9px; background: linear-gradient(135deg, #1677ff, #36cfc9); display:inline-flex; align-items:center; justify-content:center; margin-right:10px; }
+    .demo-pill { margin-left: auto; font-size: 11px; color: #b9d7ff; background: rgba(22,119,255,.18); border: 1px solid rgba(64,150,255,.24); border-radius: 999px; padding: 3px 7px; }
+    .menu { padding: 12px 8px 24px; }
+    .menu-section { color: rgba(255,255,255,.42); font-size: 12px; padding: 14px 12px 8px; }
+    .menu-item { height: 40px; display:flex; align-items:center; gap: 10px; padding: 0 12px; border-radius: 8px; cursor:pointer; margin-bottom:4px; user-select: none; }
+    .menu-item:hover { background: rgba(255,255,255,.06); color: #fff; }
+    .menu-item.active { background: var(--sidebar-active); color:#fff; }
+    .menu-icon { width: 20px; text-align:center; opacity: .9; }
+    .main { flex: 1; min-width: 0; }
+    .topbar { height: 58px; background: var(--card); border-bottom: 1px solid var(--line); display:flex; align-items:center; justify-content:space-between; padding: 0 24px; position: sticky; top: 0; z-index: 20; }
+    .breadcrumb { color: var(--muted); font-size: 13px; }
+    .breadcrumb span { color: var(--text); }
+    .user { display:flex; align-items:center; gap:12px; color: var(--sub-text); }
+    .avatar { width: 32px; height:32px; border-radius:50%; background: var(--blue-bg); color: var(--primary); display:grid; place-items:center; font-weight:700; }
+    .content { padding: 22px 24px 44px; }
+    .view { display:none; }
+    .view.active { display:block; }
+    .page-head { display:flex; align-items:flex-start; justify-content:space-between; gap: 16px; margin-bottom: 16px; }
+    h1 { margin: 0; font-size: 24px; line-height: 34px; }
+    h2, h3 { margin:0; }
+    .desc { margin: 6px 0 0; color: var(--sub-text); line-height: 1.6; font-size: 13px; }
+    .notice { border: 1px solid #c7d7fe; background: var(--blue-bg); color: #1e40af; border-radius: 10px; padding: 12px 14px; line-height: 1.65; margin-bottom: 16px; display:flex; gap: 10px; align-items:flex-start; }
+    .notice.warning { border-color: #f8d98b; background: var(--orange-bg); color: #8a4a05; }
+    .stats { display:grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 16px; }
+    .stat-card { background: var(--card); border:1px solid var(--line); border-radius: 12px; padding: 16px; box-shadow: var(--shadow); }
+    .stat-label { color: var(--sub-text); font-size: 13px; display:flex; align-items:center; justify-content:space-between; gap: 8px; }
+    .stat-num { margin-top: 8px; font-size: 28px; line-height: 34px; font-weight: 760; letter-spacing: -.02em; }
+    .stat-note { margin-top: 5px; color: var(--muted); font-size: 12px; }
+    .card { background: var(--card); border:1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow); margin-bottom: 16px; overflow: hidden; }
+    .card-hd { padding: 16px 18px; border-bottom:1px solid var(--line); display:flex; align-items:center; justify-content:space-between; gap: 16px; }
+    .card-title { font-weight: 700; font-size: 15px; }
+    .card-bd { padding: 18px; }
+    .toolbar { display:flex; gap: 10px; flex-wrap: wrap; align-items:center; }
+    .filters { display:grid; grid-template-columns: 1.35fr 1fr 1fr 1fr auto auto; gap: 12px; align-items:end; }
+    .field label { display:block; margin-bottom: 6px; color: var(--sub-text); font-size: 13px; }
+    input, select, textarea { width:100%; border:1px solid #d9dde3; border-radius: 8px; padding: 0 10px; background:#fff; color: var(--text); outline: none; }
+    input, select { height: 34px; }
+    textarea { min-height: 86px; padding: 10px; resize: vertical; }
+    input:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(22,119,255,.12); }
+    .btn { border:1px solid var(--line); background:#fff; color: var(--text); height: 34px; padding: 0 14px; border-radius: 8px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap: 6px; font-size:14px; white-space:nowrap; }
+    .btn:hover { border-color: var(--primary-hover); color: var(--primary); }
+    .btn.primary { background: var(--primary); color:#fff; border-color: var(--primary); }
+    .btn.primary:hover { background: var(--primary-hover); color:#fff; }
+    .btn.text { border-color: transparent; background: transparent; padding: 0 5px; height: auto; color: var(--primary); }
+    .btn.soft { background: var(--blue-bg); border-color: #c7d7fe; color:#1d4ed8; }
+    .btn.warn { background: var(--orange-bg); border-color: #fed7aa; color:#b45309; }
+    .btn:disabled { background:#f2f3f5; color:#b4b8bf; border-color:var(--line); cursor:not-allowed; }
+    table { width:100%; border-collapse: collapse; }
+    .table-wrap { overflow:auto; }
+    th, td { padding: 12px 14px; border-bottom: 1px solid var(--line); text-align:left; vertical-align:middle; }
+    th { background:#fafafa; color: var(--sub-text); font-size: 13px; font-weight:600; white-space:nowrap; }
+    tr:hover td { background:#fbfdff; }
+    .muted { color: var(--muted); }
+    .sub { color: var(--sub-text); font-size: 12px; margin-top: 3px; line-height: 1.45; }
+    .strong { font-weight: 700; }
+    .tag { display:inline-flex; align-items:center; gap: 4px; height: 23px; padding: 0 8px; border-radius: 999px; font-size: 12px; margin: 2px 4px 2px 0; white-space:nowrap; font-weight:600; }
+    .tag.blue { color: var(--primary); background: var(--blue-bg); }
+    .tag.green { color:#389e0d; background: var(--green-bg); }
+    .tag.orange { color:#d48806; background: var(--orange-bg); }
+    .tag.red { color: var(--danger); background: var(--red-bg); }
+    .tag.purple { color: var(--purple); background: var(--purple-bg); }
+    .tag.gray { color: var(--sub-text); background: var(--gray-bg); }
+    .priority { display:inline-flex; align-items:center; height: 24px; padding: 0 8px; border-radius: 6px; font-size: 12px; font-weight:700; }
+    .priority.high { color:#b42318; background: var(--red-bg); }
+    .priority.mid { color:#b45309; background: var(--orange-bg); }
+    .priority.low { color:#175cd3; background: var(--blue-bg); }
+    .student-cell { display:flex; align-items:center; gap: 10px; min-width: 160px; }
+    .student-avatar { width: 34px; height:34px; border-radius:50%; background: linear-gradient(135deg,#1677ff,#36cfc9); color:#fff; display:grid; place-items:center; font-weight:800; flex-shrink:0; }
+    .progress { width: 116px; height: 7px; background: #edf0f5; border-radius: 999px; overflow:hidden; display:inline-block; vertical-align: middle; margin-right: 8px; }
+    .progress i { display:block; height:100%; border-radius:999px; background: var(--primary); }
+    .progress.green i { background: var(--success); }
+    .progress.orange i { background: var(--warning); }
+    .progress.red i { background: var(--danger); }
+    .two-col { display:grid; grid-template-columns: 1.1fr .9fr; gap: 16px; align-items:start; }
+    .three-col { display:grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+    .mini-card { border: 1px solid var(--line); background:#fbfcff; border-radius: 10px; padding: 14px; }
+    .mini-card b { display:block; margin-bottom: 8px; }
+    .mini-card span, .mini-card li { color: var(--sub-text); font-size: 13px; line-height: 1.6; }
+    .queue { display:grid; gap: 10px; }
+    .queue-item { border:1px solid var(--line); border-radius: 10px; padding: 13px; display:grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items:center; background:#fff; }
+    .queue-item:hover { border-color:#b8ccff; background:#fbfdff; }
+    .queue-main { min-width:0; }
+    .queue-title { display:flex; align-items:center; gap: 8px; flex-wrap: wrap; }
+    .queue-title b { font-size: 14px; }
+    .queue-evidence { color: var(--sub-text); font-size: 12px; margin-top: 5px; line-height: 1.5; }
+    .queue-actions { display:flex; gap: 6px; }
+    .timeline { list-style:none; padding:0; margin:0; }
+    .timeline li { position:relative; padding-left: 22px; padding-bottom: 14px; color: var(--sub-text); line-height: 20px; }
+    .timeline li::before { content:''; position:absolute; left:4px; top:5px; width:8px; height:8px; border-radius:50%; background: var(--primary); }
+    .timeline li::after { content:''; position:absolute; left:7px; top:16px; bottom:0; width:1px; background: var(--line); }
+    .timeline li:last-child::after { display:none; }
+    .timeline b { color: var(--text); }
+    .drawer-mask { position:fixed; inset:0; background:rgba(0,0,0,.24); display:none; z-index:40; }
+    .drawer-mask.open { display:block; }
+    .drawer { position:fixed; top:0; right:-920px; width:920px; max-width: calc(100vw - 48px); height:100vh; background:#fff; z-index:50; box-shadow:-8px 0 28px rgba(16,24,40,.18); transition:right .22s ease; display:flex; flex-direction:column; }
+    .drawer.open { right:0; }
+    .drawer-hd { min-height:62px; padding: 12px 20px; border-bottom:1px solid var(--line); display:flex; align-items:center; justify-content:space-between; gap: 16px; }
+    .drawer-title { font-size: 18px; font-weight:700; }
+    .drawer-bd { flex:1; overflow:auto; padding: 18px 20px; background:#f7f8fa; }
+    .drawer-ft { min-height:58px; border-top:1px solid var(--line); display:flex; align-items:center; justify-content:flex-end; gap:10px; padding: 10px 20px; }
+    .drawer-tabs { display:flex; border-bottom:1px solid var(--line); margin: 0 -20px 16px; padding: 0 20px; background:#fff; position:sticky; top:-18px; z-index: 2; }
+    .drawer-tab { padding: 13px 0; margin-right: 24px; cursor:pointer; color: var(--sub-text); position:relative; }
+    .drawer-tab.active { color: var(--primary); font-weight:700; }
+    .drawer-tab.active::after { content:''; position:absolute; left:0; right:0; bottom:-1px; height:2px; background: var(--primary); }
+    .drawer-pane { display:none; }
+    .drawer-pane.active { display:block; }
+    .detail-grid { display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 12px; margin-bottom: 14px; }
+    .detail { background:#fff; border:1px solid var(--line); border-radius:10px; padding: 13px; }
+    .detail span { display:block; color: var(--muted); font-size: 12px; margin-bottom: 5px; }
+    .detail b { font-size: 16px; }
+    .modal-mask { display:none; position:fixed; inset:0; z-index:70; background: rgba(17,24,39,.48); align-items:center; justify-content:center; padding:22px; }
+    .modal-mask.show { display:flex; }
+    .modal { width: min(680px, 100%); max-height: 88vh; background:#fff; border-radius: 14px; box-shadow: 0 20px 60px rgba(0,0,0,.25); overflow:hidden; display:flex; flex-direction:column; }
+    .modal.small { width: min(480px,100%); }
+    .modal-hd { height: 56px; border-bottom:1px solid var(--line); display:flex; align-items:center; justify-content:space-between; padding:0 18px; font-weight:700; }
+    .modal-bd { padding: 18px; overflow:auto; }
+    .modal-ft { min-height: 58px; border-top:1px solid var(--line); display:flex; align-items:center; justify-content:flex-end; gap:10px; padding: 10px 18px; background:#fafafa; }
+    .close { border:0; background:transparent; font-size:24px; line-height:1; color: var(--muted); cursor:pointer; }
+    .form-grid { display:grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .form-grid .full { grid-column: 1/-1; }
+    .error { color: var(--danger); font-size: 13px; margin-top: 8px; display:none; }
+    .error.show { display:block; }
+    .toast { position:fixed; z-index:90; top:22px; left:50%; transform:translateX(-50%) translateY(-12px); opacity:0; pointer-events:none; color:#fff; background:#111827; border-radius:999px; padding: 12px 16px; box-shadow: var(--shadow); transition:.2s ease; }
+    .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+    .empty-tip { padding: 32px; text-align:center; color: var(--muted); background:#fafafa; border:1px dashed var(--line); border-radius:10px; }
+    .metric-row { display:grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    .chart-card { border:1px solid var(--line); border-radius:10px; padding:14px; background:#fff; }
+    .meter { display:flex; flex-direction:column; gap: 9px; }
+    .meter-row { display:grid; grid-template-columns: 82px 1fr 42px; gap:10px; align-items:center; font-size: 13px; }
+    .bar { height: 9px; background:#edf0f5; border-radius:999px; overflow:hidden; }
+    .bar i { display:block; height:100%; background: var(--primary); border-radius:999px; }
+    .bar.orange i { background: var(--warning); }
+    .bar.green i { background: var(--success); }
+    .disabled-node { opacity:.55; }
+
+    @media (max-width: 1180px) {
+      .stats, .metric-row { grid-template-columns: repeat(2, 1fr); }
+      .filters { grid-template-columns: 1fr 1fr; }
+      .two-col { grid-template-columns: 1fr; }
+      .drawer { width: 820px; }
+    }
+    @media (max-width: 780px) {
+      .layout { display:block; }
+      .sidebar { position:relative; width:100%; height:auto; }
+      .menu { display:flex; overflow:auto; padding:8px; }
+      .menu-section { display:none; }
+      .menu-item { flex:0 0 auto; }
+      .content { padding: 16px; }
+      .page-head { display:block; }
+      .stats, .detail-grid, .three-col, .metric-row, .form-grid { grid-template-columns: 1fr; }
+      .queue-item { grid-template-columns: 1fr; }
+      .drawer { max-width:100vw; width:100vw; }
+      .drawer-tabs { overflow:auto; }
+    }
+  </style>
+</head>
+<body>
+  <div class="toast" id="toast"></div>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand"><span class="brand-icon">虎</span>虎校 LP 管台 <span class="demo-pill">Demo</span></div>
+      <div class="menu">
+        <div class="menu-section">日常服务</div>
+        <div class="menu-item active" data-view="dashboard"><span class="menu-icon">🏠</span>LP 工作台</div>
+        <div class="menu-item" data-view="students"><span class="menu-icon">👧</span>我的学生</div>
+        <div class="menu-item" data-view="courses"><span class="menu-icon">📚</span>课程与约课</div>
+        <div class="menu-section">经营跟进</div>
+        <div class="menu-item" data-view="nodes"><span class="menu-icon">🧭</span>服务节点</div>
+        <div class="menu-item" data-view="rewards"><span class="menu-icon">🎁</span>活动与奖励</div>
+        <div class="menu-item" data-view="orders"><span class="menu-icon">💳</span>订单与课包</div>
+        <div class="menu-section">个人管理</div>
+        <div class="menu-item" data-view="review"><span class="menu-icon">📈</span>个人复盘</div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="breadcrumb">虎校业务 / <span id="crumb">LP 工作台</span></div>
+        <div class="user"><span>LP 王老师｜今日 2026-09-24</span><div class="avatar">王</div></div>
+      </div>
+      <div class="content">
+        <div class="notice"><span>💡</span><div><b>原型演示说明：</b>页面数据和操作均为 Mock，不触发真实电话、企微消息、排课、赠课发放、支付或系统同步。核心演示 LP 如何完成“发现待办 → 查看依据 → 联系家长 → 记录结果 → 安排下一步”的闭环。</div></div>
+
+        <section class="view active" id="dashboard"></section>
+        <section class="view" id="students"></section>
+        <section class="view" id="courses"></section>
+        <section class="view" id="nodes"></section>
+        <section class="view" id="rewards"></section>
+        <section class="view" id="orders"></section>
+        <section class="view" id="review"></section>
+      </div>
+    </main>
+  </div>
+
+  <div class="drawer-mask" id="drawerMask"></div>
+  <aside class="drawer" id="studentDrawer"></aside>
+  <div class="modal-mask" id="modalMask"><div class="modal" id="modal"></div></div>
+
+  <script>
+    const state = {
+      currentView: 'dashboard',
+      filter: { keyword: '', risk: '全部', taskType: '全部', wecom: '全部', package: '全部' },
+      currentStudentId: 's1',
+      drawerTab: 'overview',
+      students: [
+        {
+          id: 's1', name: 'Ethan Wang', en: 'Ethan', sid: 'SID100238', parent: 'Mary Chen', phone: '138****9021', wecom: '已绑定', status: '正常在读',
+          package: 'CABC 144课包', hoursLeft: 18, hoursTotal: 144, endDate: '2026-10-16', lessonRate: '近7天未约课', risk: '高风险', nextNode: '课包到期提醒',
+          study: { attendance: 10, homework: 62, preview: 50, days: 4, frequency: '偏低' },
+          reward: { poster: '本周未分享', qinxue: 9, target: 12, gift: '差 3 节达标', campaign: '9月勤学奖活动' },
+          order: { latest: '2026-06-18｜144课包｜¥16,800', intention: '续费待沟通', buCha: '补差期已结束' },
+          notes: [
+            { time:'09-22 19:20', title:'电话沟通', text:'家长反馈近期学校作业多，本周暂未约课，约定周四再确认时间。' },
+            { time:'09-18 14:05', title:'企微提醒', text:'提醒完成课后作业，家长已读未回复。' }
+          ],
+          courses: [
+            { title:'自然拼读 L4-U6', time:'09-20 19:30', status:'已上课', homework:'课后作业未完成', teacher:'Amy' },
+            { title:'口语主题课-Travel', time:'待约课', status:'未约课', homework:'-', teacher:'待分配' }
+          ],
+          nodes: [
+            { name:'首通', status:'已完成', due:'已完成', desc:'已加微并确认首课安排' },
+            { name:'问题课程', status:'待处理', due:'今日 18:00', desc:'9/20 课后作业未完成且家长未反馈' },
+            { name:'课包到期提醒', status:'待处理', due:'09-27', desc:'剩余 18 课时，课包 10/16 到期' }
+          ]
+        },
+        {
+          id: 's2', name: 'Luna Li', en:'Luna', sid:'SID100251', parent:'Linda', phone:'136****7812', wecom:'未绑定', status:'新生承接',
+          package:'CABC 96课包', hoursLeft: 92, hoursTotal: 96, endDate:'2027-03-02', lessonRate:'首课待引导', risk:'中风险', nextNode:'首课',
+          study: { attendance: 1, homework: 100, preview: 100, days: 1, frequency: '新生观察' },
+          reward: { poster:'未参与', qinxue:1, target:12, gift:'新购次月参与', campaign:'暂未开始' },
+          order: { latest:'2026-09-19｜96课包｜¥12,800', intention:'首课后观察', buCha:'补差期内，可推荐专项包' },
+          notes:[{time:'09-23 10:32', title:'首次联系', text:'家长同意加企微，但尚未完成绑定。'}],
+          courses:[{title:'首课体验-Reading', time:'09-25 20:00', status:'已约课', homework:'课前预习已完成', teacher:'Eva'}],
+          nodes:[{name:'首通', status:'已完成', due:'已完成', desc:'已完成首次联系'}, {name:'首课', status:'待处理', due:'09-25 21:00', desc:'首课后需回访家长'}, {name:'加微/企微绑定', status:'待处理', due:'今日', desc:'家长尚未完成企微绑定'}]
+        },
+        {
+          id:'s3', name:'Kevin Zhang', en:'Kevin', sid:'SID100277', parent:'Jack', phone:'139****1108', wecom:'已绑定', status:'补差期',
+          package:'首次报名 48课包', hoursLeft: 9, hoursTotal: 48, endDate:'2026-11-30', lessonRate:'课消正常', risk:'经营机会', nextNode:'补差节点',
+          study:{ attendance: 39, homework: 86, preview: 78, days: 18, frequency:'稳定' },
+          reward:{ poster:'已分享 1/2', qinxue:11, target:12, gift:'差 1 节达标', campaign:'9月勤学奖活动' },
+          order:{ latest:'2026-08-02｜48课包｜¥6,800', intention:'补差高意向', buCha:'补差期内，建议本周跟进' },
+          notes:[{time:'09-21 20:05', title:'企微沟通', text:'家长认可老师，询问补差课包优惠和赠课。'}],
+          courses:[{title:'自然拼读 L2-U8', time:'09-24 19:30', status:'待上课', homework:'课前预习未完成', teacher:'Bob'}, {title:'自然拼读 L2-U9', time:'09-27 19:30', status:'已约课', homework:'-', teacher:'Bob'}],
+          nodes:[{name:'补差节点', status:'待处理', due:'今日', desc:'补差期内且家长有咨询'}, {name:'月度回访', status:'进行中', due:'09-28', desc:'本月课消接近勤学奖达标'}]
+        },
+        {
+          id:'s4', name:'Mia Chen', en:'Mia', sid:'SID100312', parent:'Alice', phone:'137****6610', wecom:'已绑定', status:'请假后待复课',
+          package:'CABC 288课包', hoursLeft: 196, hoursTotal: 288, endDate:'2027-04-20', lessonRate:'请假后未复课', risk:'中风险', nextNode:'月度回访',
+          study:{ attendance: 7, homework: 71, preview: 60, days: 9, frequency:'下降' },
+          reward:{ poster:'已分享 2/2', qinxue:7, target:12, gift:'本月进度落后', campaign:'9月勤学奖活动' },
+          order:{ latest:'2026-07-21｜288课包｜¥29,800', intention:'长期服务', buCha:'不适用' },
+          notes:[{time:'09-17 11:10', title:'请假处理', text:'家长出行请假，提醒返程后恢复约课。'}],
+          courses:[{title:'绘本精读 L3-U3', time:'09-17 20:00', status:'已请假', homework:'-', teacher:'Cindy'}],
+          nodes:[{name:'月度回访', status:'待处理', due:'明日', desc:'请假后尚未恢复正常课频'}, {name:'复课提醒', status:'待处理', due:'今日', desc:'请假后 7 天未约课'}]
+        }
+      ],
+      tasks: [
+        { id:'t1', studentId:'s1', type:'课包到期提醒', priority:'high', due:'今日 18:00', status:'待处理', evidence:'剩余 18 课时，课包 10/16 到期；近 7 天未约课。', action:'联系家长确认续费/约课计划' },
+        { id:'t2', studentId:'s3', type:'补差节点', priority:'high', due:'今日', status:'待处理', evidence:'家长询问补差优惠；勤学奖差 1 节达标。', action:'Push 补差，并提醒本周上满课' },
+        { id:'t3', studentId:'s2', type:'首课', priority:'mid', due:'09-25 21:00', status:'待处理', evidence:'新生首课已约 09-25 20:00；企微未绑定。', action:'首课前提醒，首课后回访' },
+        { id:'t4', studentId:'s4', type:'复课提醒', priority:'mid', due:'今日', status:'待处理', evidence:'请假后 7 天未恢复约课；本月勤学奖进度 7/12。', action:'确认复课时间并协助约课' },
+        { id:'t5', studentId:'s1', type:'问题课程', priority:'mid', due:'已逾期', status:'逾期', evidence:'9/20 课后作业未完成，家长未反馈。', action:'催促作业并记录问题课程处理结果' }
+      ],
+      plannedNodes: ['UA 节点', '升级节点', '续费节点（剩余课时≤15触发）']
+    };
+
+    const viewNames = { dashboard:'LP 工作台', students:'我的学生', courses:'课程与约课', nodes:'服务节点', rewards:'活动与奖励', orders:'订单与课包', review:'个人复盘' };
+    const $ = (sel) => document.querySelector(sel);
+    const $$ = (sel) => Array.from(document.querySelectorAll(sel));
+    const studentById = (id) => state.students.find(s => s.id === id);
+    const openTasks = () => state.tasks.filter(t => t.status !== '已完成');
+    const priorityClass = (p) => p === 'high' ? 'high' : p === 'mid' ? 'mid' : 'low';
+    const priorityText = (p) => p === 'high' ? '高优先级' : p === 'mid' ? '中优先级' : '低优先级';
+    const riskTag = (risk) => risk === '高风险' ? 'red' : risk === '中风险' ? 'orange' : risk === '经营机会' ? 'purple' : 'green';
+
+    function renderAll() {
+      renderDashboard(); renderStudents(); renderCourses(); renderNodes(); renderRewards(); renderOrders(); renderReview();
+    }
+
+    function pageHead(title, desc, action = '') {
+      return `<div class="page-head"><div><h1>${title}</h1><p class="desc">${desc}</p></div><div class="toolbar">${action}</div></div>`;
+    }
+
+    function renderDashboard() {
+      const done = state.tasks.filter(t => t.status === '已完成').length;
+      const overdue = state.tasks.filter(t => t.status === '逾期').length;
+      const high = openTasks().filter(t => t.priority === 'high').length;
+      const soon = state.students.filter(s => s.hoursLeft <= 20).length;
+      $('#dashboard').innerHTML = `
+        ${pageHead('LP 工作台', '先处理最需要关注的学生：系统把服务节点、课消、约课、奖励和经营机会汇成今日跟进队列。', '<button class="btn soft" onclick="openContactModal(\'s1\',\'快速记录\')">+ 快速记录 Follow</button>')}
+        <section class="stats">
+          <div class="stat-card"><div class="stat-label">今日待处理 <span class="tag orange">实时</span></div><div class="stat-num">${openTasks().length}</div><div class="stat-note">按截止时间和风险排序</div></div>
+          <div class="stat-card"><div class="stat-label">高优任务</div><div class="stat-num">${high}</div><div class="stat-note">优先联系家长或处理异常</div></div>
+          <div class="stat-card"><div class="stat-label">课包≤20课时</div><div class="stat-num">${soon}</div><div class="stat-note">需关注续费/到期节奏</div></div>
+          <div class="stat-card"><div class="stat-label">今日已闭环</div><div class="stat-num">${done}</div><div class="stat-note">完成后沉淀进联系时间线</div></div>
+        </section>
+        <div class="two-col">
+          <section class="card"><div class="card-hd"><div><div class="card-title">今日跟进队列</div><div class="sub">不是只看数量，而是直接告诉 LP “谁、为什么、做什么”。</div></div><select onchange="filterTaskType(this.value)"><option>全部</option><option>课包到期提醒</option><option>补差节点</option><option>首课</option><option>复课提醒</option><option>问题课程</option></select></div><div class="card-bd"><div class="queue">${taskQueueHtml()}</div></div></section>
+          <section class="card"><div class="card-hd"><div class="card-title">重点学生概览</div><button class="btn text" onclick="switchView('students')">查看全部</button></div><div class="card-bd"><div class="three-col">${state.students.slice(0,3).map(studentMiniHtml).join('')}</div></div></section>
+        </div>
+        <section class="card"><div class="card-hd"><div><div class="card-title">服务闭环主线</div><div class="sub">原型的主交互路径：从待办进入学生档案，处理后同步更新状态。</div></div></div><div class="card-bd"><div class="three-col"><div class="mini-card"><b>1. 发现</b><span>待办基于服务节点、课包、约课、作业、奖励进度和经营机会触发。</span></div><div class="mini-card"><b>2. 处理</b><span>查看学生档案里的依据，一键联系家长、约课、催作业或记录经营意向。</span></div><div class="mini-card"><b>3. 闭环</b><span>提交沟通结果后，更新待办状态、联系时间线和下一次跟进时间。</span></div></div></div></section>
+      `;
+    }
+
+    function taskQueueHtml() {
+      const list = state.tasks.filter(t => t.status !== '已完成' && (state.filter.taskType === '全部' || t.type === state.filter.taskType));
+      if (!list.length) return '<div class="empty-tip">当前筛选下暂无待处理事项</div>';
+      return list.map(t => {
+        const s = studentById(t.studentId);
+        return `<div class="queue-item"><div class="student-avatar">${s.en[0]}</div><div class="queue-main"><div class="queue-title"><b>${s.name}</b><span class="priority ${priorityClass(t.priority)}">${priorityText(t.priority)}</span><span class="tag ${t.status==='逾期'?'red':'blue'}">${t.type}</span><span class="tag gray">${t.due}</span></div><div class="queue-evidence">依据：${t.evidence}<br>建议动作：${t.action}</div></div><div class="queue-actions"><button class="btn" onclick="openDrawer('${s.id}')">看档案</button><button class="btn primary" onclick="openContactModal('${s.id}','${t.type}')">记录处理</button></div></div>`;
+      }).join('');
+    }
+
+    function studentMiniHtml(s) {
+      return `<div class="mini-card"><b>${s.name} <span class="tag ${riskTag(s.risk)}">${s.risk}</span></b><span>下一节点：${s.nextNode}</span><br><span>课包：剩余 ${s.hoursLeft}/${s.hoursTotal} 课时</span><br><span>奖励：${s.reward.gift}</span><div style="margin-top:10px"><button class="btn text" onclick="openDrawer('${s.id}')">查看服务档案</button></div></div>`;
+    }
+
+    function renderStudents() {
+      $('#students').innerHTML = `
+        ${pageHead('我的学生', '围绕 LP 负责学生建立服务视图：课包、学情、家长联系、奖励进度和下一个节点集中展示。')}
+        <section class="card"><div class="card-hd"><div class="card-title">筛选条件</div><button class="btn" onclick="resetStudentFilter()">重置</button></div><div class="card-bd"><div class="filters"><div class="field"><label>学生 / 家长 / ID</label><input id="keyword" placeholder="输入 Ethan / 家长 / SID" oninput="state.filter.keyword=this.value; renderStudents()" value="${state.filter.keyword}" /></div><div class="field"><label>风险类型</label><select onchange="state.filter.risk=this.value; renderStudents()"><option ${state.filter.risk==='全部'?'selected':''}>全部</option><option ${state.filter.risk==='高风险'?'selected':''}>高风险</option><option ${state.filter.risk==='中风险'?'selected':''}>中风险</option><option ${state.filter.risk==='经营机会'?'selected':''}>经营机会</option></select></div><div class="field"><label>企微状态</label><select onchange="state.filter.wecom=this.value; renderStudents()"><option ${state.filter.wecom==='全部'?'selected':''}>全部</option><option ${state.filter.wecom==='已绑定'?'selected':''}>已绑定</option><option ${state.filter.wecom==='未绑定'?'selected':''}>未绑定</option></select></div><div class="field"><label>课包状态</label><select onchange="state.filter.package=this.value; renderStudents()"><option ${state.filter.package==='全部'?'selected':''}>全部</option><option ${state.filter.package==='剩余≤20课时'?'selected':''}>剩余≤20课时</option><option ${state.filter.package==='补差期'?'selected':''}>补差期</option><option ${state.filter.package==='请假/休学后'?'selected':''}>请假/休学后</option></select></div><button class="btn primary" onclick="renderStudents()">查询</button><button class="btn" onclick="resetStudentFilter()">清除</button></div></div></section>
+        <section class="card"><div class="card-hd"><div class="card-title">学生列表</div><div class="muted">共 ${filteredStudents().length} 名</div></div><div class="table-wrap"><table><thead><tr><th>学生</th><th>家长/企微</th><th>当前课包</th><th>课消与学情</th><th>奖励/活动</th><th>下一节点</th><th>操作</th></tr></thead><tbody>${filteredStudents().map(studentRowHtml).join('')}</tbody></table></div></section>
+      `;
+    }
+
+    function filteredStudents() {
+      const kw = state.filter.keyword.trim().toLowerCase();
+      return state.students.filter(s => (!kw || [s.name,s.parent,s.sid,s.en].some(v => String(v).toLowerCase().includes(kw))) && (state.filter.risk === '全部' || s.risk === state.filter.risk) && (state.filter.wecom === '全部' || s.wecom === state.filter.wecom) && (state.filter.package === '全部' || (state.filter.package === '剩余≤20课时' ? s.hoursLeft <= 20 : state.filter.package === '补差期' ? s.status === '补差期' : ['请假后待复课','休学中'].includes(s.status))));
+    }
+
+    function studentRowHtml(s) {
+      const pct = Math.round((s.hoursTotal - s.hoursLeft) / s.hoursTotal * 100);
+      return `<tr><td><div class="student-cell"><div class="student-avatar">${s.en[0]}</div><div><b>${s.name}</b><div class="sub">${s.sid}｜${s.status}</div></div></div></td><td>${s.parent}<div class="sub">${s.phone}｜<span class="tag ${s.wecom==='已绑定'?'green':'orange'}">${s.wecom}</span></div></td><td>${s.package}<div class="sub">剩余 ${s.hoursLeft}/${s.hoursTotal}｜到期 ${s.endDate}</div></td><td><span class="progress ${pct>80?'green':pct>60?'orange':'red'}"><i style="width:${pct}%"></i></span>${pct}%<div class="sub">作业 ${s.study.homework}%｜${s.lessonRate}</div></td><td>${s.reward.campaign}<div class="sub">${s.reward.gift}｜${s.reward.poster}</div></td><td><span class="tag ${riskTag(s.risk)}">${s.risk}</span><div class="sub">${s.nextNode}</div></td><td><button class="btn text" onclick="openDrawer('${s.id}')">服务档案</button><button class="btn text" onclick="openContactModal('${s.id}','列表跟进')">联系</button><button class="btn text" onclick="openScheduleModal('${s.id}')">约课</button></td></tr>`;
+    }
+
+    function renderCourses() {
+      $('#courses').innerHTML = `${pageHead('课程与约课', '集中处理待约课、课前提醒、课后反馈和学习任务。这里仅模拟操作，不做真实排课冲突校验。', '<button class="btn primary" onclick="openScheduleModal(\'s3\')">+ 帮学生约课</button>')}
+        <section class="card"><div class="card-hd"><div class="card-title">近期课程跟进</div><span class="tag blue">课前 / 课后 / 作业状态</span></div><div class="table-wrap"><table><thead><tr><th>学生</th><th>课程</th><th>时间</th><th>老师</th><th>课程状态</th><th>学习任务</th><th>操作</th></tr></thead><tbody>${state.students.flatMap(s => s.courses.map((c,i) => courseRowHtml(s,c,i))).join('')}</tbody></table></div></section>`;
+    }
+
+    function courseRowHtml(s,c,i) {
+      const statusColor = c.status === '已上课' ? 'green' : c.status === '未约课' ? 'red' : c.status === '已请假' ? 'orange' : 'blue';
+      const hwColor = c.homework.includes('未') ? 'orange' : c.homework === '-' ? 'gray' : 'green';
+      return `<tr><td><div class="student-cell"><div class="student-avatar">${s.en[0]}</div><div><b>${s.name}</b><div class="sub">${s.parent}</div></div></div></td><td>${c.title}</td><td>${c.time}</td><td>${c.teacher}</td><td><span class="tag ${statusColor}">${c.status}</span></td><td><span class="tag ${hwColor}">${c.homework}</span></td><td><button class="btn text" onclick="openDrawer('${s.id}','study')">看学情</button><button class="btn text" onclick="updateCourse('${s.id}',${i})">更新状态</button><button class="btn text" onclick="openScheduleModal('${s.id}')">约课</button></td></tr>`;
+    }
+
+    function renderNodes() {
+      const activeNodes = ['首通','问题课程','首课','课包到期提醒','补差节点','首单元','CF03','月度回访'];
+      $('#nodes').innerHTML = `${pageHead('服务节点', '把服务节点当成可追踪任务：每个节点都应有触发原因、截止时间、处理动作和关闭状态。')}
+      <div class="notice warning"><span>⚠️</span><div><b>边界说明：</b>UA 节点、升级节点、续费节点目前仅作为二期规划展示，不在本原型中提供可执行处理流程。</div></div>
+      <section class="card"><div class="card-hd"><div class="card-title">已纳入本期服务节点</div></div><div class="card-bd"><div class="three-col">${activeNodes.map(n => `<div class="mini-card"><b>${n}</b><span>${nodeDesc(n)}</span></div>`).join('')}</div></div></section>
+      <section class="card"><div class="card-hd"><div class="card-title">学生节点明细</div></div><div class="table-wrap"><table><thead><tr><th>学生</th><th>节点</th><th>状态</th><th>截止时间</th><th>触发依据</th><th>操作</th></tr></thead><tbody>${state.students.flatMap(s => s.nodes.map(n => nodeRowHtml(s,n))).join('')}${state.plannedNodes.map(n => `<tr class="disabled-node"><td>-</td><td>${n}</td><td><span class="tag gray">规划中</span></td><td>-</td><td>二期规划，暂未开发</td><td><button class="btn" disabled>暂不可处理</button></td></tr>`).join('')}</tbody></table></div></section>`;
+    }
+
+    function nodeDesc(n) {
+      const map = { '首通':'新分配学生后首次联系家长，加微并确认首课安排。','问题课程':'处理缺课、作业未完成、课堂反馈异常等问题。','首课':'首课前提醒与首课后回访。','课包到期提醒':'结合剩余课时和到期时间提醒续费或排课。','补差节点':'首次报名后到真正续费前，推动补差课包。','首单元':'首个单元完成后检查学习效果和家长反馈。','CF03':'固定服务检查节点，记录阶段性学习情况。','月度回访':'每月回访课消、学习状态、家长满意度。' };
+      return map[n] || '服务节点说明';
+    }
+    function nodeRowHtml(s,n) {
+      const color = n.status === '已完成' ? 'green' : n.status === '进行中' ? 'blue' : 'orange';
+      return `<tr><td>${s.name}<div class="sub">${s.parent}</div></td><td>${n.name}</td><td><span class="tag ${color}">${n.status}</span></td><td>${n.due}</td><td>${n.desc}</td><td><button class="btn text" onclick="openDrawer('${s.id}','nodes')">看档案</button><button class="btn text" onclick="completeNode('${s.id}','${n.name}')">完成/记录</button></td></tr>`;
+    }
+
+    function renderRewards() {
+      $('#rewards').innerHTML = `${pageHead('活动与奖励', '展示海报分享、勤学奖/赠课进度与人工跟进动作。奖励规则可能随活动变化，原型不写死统一算法。')}
+      <div class="notice warning"><span>📌</span><div><b>规则边界：</b>朋友圈海报任务、勤学奖和赠课不是固定规则；这里按模拟活动口径展示当前进度，不自动判定真实资格或发放赠课。</div></div>
+      <section class="card"><div class="card-hd"><div class="card-title">奖励进度与催促</div></div><div class="table-wrap"><table><thead><tr><th>学生</th><th>活动</th><th>朋友圈海报</th><th>勤学奖进度</th><th>当前判断</th><th>操作</th></tr></thead><tbody>${state.students.map(s => `<tr><td><div class="student-cell"><div class="student-avatar">${s.en[0]}</div><div><b>${s.name}</b><div class="sub">${s.parent}</div></div></div></td><td>${s.reward.campaign}</td><td><span class="tag ${s.reward.poster.includes('未')?'orange':s.reward.poster.includes('2/2')?'green':'blue'}">${s.reward.poster}</span></td><td><span class="progress ${s.reward.qinxue>=s.reward.target?'green':s.reward.qinxue>=9?'orange':'red'}"><i style="width:${Math.min(100,Math.round(s.reward.qinxue/s.reward.target*100))}%"></i></span>${s.reward.qinxue}/${s.reward.target}</td><td>${s.reward.gift}</td><td><button class="btn text" onclick="openContactModal('${s.id}','奖励催促')">催促并记录</button><button class="btn text" onclick="openDrawer('${s.id}','rewards')">看详情</button></td></tr>`).join('')}</tbody></table></div></section>`;
+    }
+
+    function renderOrders() {
+      $('#orders').innerHTML = `${pageHead('订单与课包', '服务过程里查看课包、剩余课时、到期、补差和续费意向；本原型只记录意向，不模拟真实支付或订单创建。')}
+        <section class="card"><div class="card-hd"><div class="card-title">课包与经营机会</div></div><div class="table-wrap"><table><thead><tr><th>学生</th><th>最新订单</th><th>课包进度</th><th>补差状态</th><th>续费/经营意向</th><th>请假/休学/复课</th><th>操作</th></tr></thead><tbody>${state.students.map(orderRowHtml).join('')}</tbody></table></div></section>`;
+    }
+    function orderRowHtml(s) {
+      return `<tr><td>${s.name}<div class="sub">${s.parent}｜${s.phone}</div></td><td>${s.order.latest}</td><td>${s.package}<div class="sub">剩余 ${s.hoursLeft}/${s.hoursTotal}｜${s.endDate} 到期</div></td><td>${s.order.buCha}</td><td><span class="tag ${s.order.intention.includes('高意向')?'purple':s.order.intention.includes('待')?'orange':'blue'}">${s.order.intention}</span></td><td><span class="tag gray">只展示入口/记录</span><div class="sub">不做资格与扣课判断</div></td><td><button class="btn text" onclick="openIntentModal('${s.id}')">记录意向</button><button class="btn text" onclick="openDrawer('${s.id}','orders')">查看</button></td></tr>`;
+    }
+
+    function renderReview() {
+      const total = state.tasks.length;
+      const done = state.tasks.filter(t => t.status === '已完成').length;
+      $('#review').innerHTML = `${pageHead('个人复盘', '帮助 LP 回看一周工作闭环情况，重点是可行动指标，不把少量数字强行做成复杂图表。')}
+      <section class="stats"><div class="stat-card"><div class="stat-label">本周联系家长</div><div class="stat-num">18</div><div class="stat-note">电话/企微/微信记录合计</div></div><div class="stat-card"><div class="stat-label">待办闭环率</div><div class="stat-num">${Math.round(done/total*100)}%</div><div class="stat-note">Demo 当前状态</div></div><div class="stat-card"><div class="stat-label">高风险学生</div><div class="stat-num">${state.students.filter(s=>s.risk==='高风险').length}</div><div class="stat-note">需优先跟进</div></div><div class="stat-card"><div class="stat-label">经营机会</div><div class="stat-num">${state.students.filter(s=>s.risk==='经营机会').length}</div><div class="stat-note">补差 / 续费 / 赠课关联</div></div></section>
+      <div class="two-col"><section class="card"><div class="card-hd"><div class="card-title">任务处理分布</div></div><div class="card-bd"><div class="meter"><div class="meter-row"><span>已完成</span><div class="bar green"><i style="width:${done/total*100}%"></i></div><b>${done}</b></div><div class="meter-row"><span>待处理</span><div class="bar orange"><i style="width:${state.tasks.filter(t=>t.status==='待处理').length/total*100}%"></i></div><b>${state.tasks.filter(t=>t.status==='待处理').length}</b></div><div class="meter-row"><span>逾期</span><div class="bar"><i style="width:${state.tasks.filter(t=>t.status==='逾期').length/total*100}%;background:var(--danger)"></i></div><b>${state.tasks.filter(t=>t.status==='逾期').length}</b></div></div><div class="sub" style="margin-top:12px">所有数值均为原型演示数据；真实系统应按业务口径计算。</div></div></section><section class="card"><div class="card-hd"><div class="card-title">下一步建议</div></div><div class="card-bd"><ul class="timeline"><li><b>先处理高优任务</b><br>课包到期、补差高意向、逾期问题课程应优先进入联系闭环。</li><li><b>补齐未绑定企微</b><br>新生承接阶段优先完成家长企微绑定，减少后续触达断点。</li><li><b>复盘奖励催促效果</b><br>海报和勤学奖仅做活动进度展示，真实规则需业务配置。</li></ul></div></section></div>`;
+    }
+
+    function openDrawer(studentId, tab='overview') {
+      state.currentStudentId = studentId;
+      state.drawerTab = tab;
+      renderDrawer();
+      $('#drawerMask').classList.add('open');
+      $('#studentDrawer').classList.add('open');
+    }
+    function closeDrawer() { $('#drawerMask').classList.remove('open'); $('#studentDrawer').classList.remove('open'); }
+    $('#drawerMask').addEventListener('click', closeDrawer);
+
+    function renderDrawer() {
+      const s = studentById(state.currentStudentId);
+      $('#studentDrawer').innerHTML = `<div class="drawer-hd"><div><div class="drawer-title">${s.name}｜学生服务档案</div><div class="sub">${s.sid}｜家长 ${s.parent} ${s.phone}｜${s.package}</div></div><button class="close" onclick="closeDrawer()">×</button></div><div class="drawer-bd"><div class="drawer-tabs">${['overview','study','records','nodes','rewards','orders'].map(tab => `<div class="drawer-tab ${state.drawerTab===tab?'active':''}" onclick="switchDrawerTab('${tab}')">${drawerTabName(tab)}</div>`).join('')}</div>${drawerPaneHtml(s)}</div><div class="drawer-ft"><button class="btn" onclick="openScheduleModal('${s.id}')">帮学生约课</button><button class="btn warn" onclick="openIntentModal('${s.id}')">记录补差/续费意向</button><button class="btn primary" onclick="openContactModal('${s.id}','档案跟进')">联系并记录</button></div>`;
+    }
+    function drawerTabName(tab) { return {overview:'服务概览',study:'课程与学情',records:'联系记录',nodes:'服务节点',rewards:'活动奖励',orders:'订单课包'}[tab]; }
+    function switchDrawerTab(tab) { state.drawerTab = tab; renderDrawer(); }
+    function drawerPaneHtml(s) {
+      if (state.drawerTab === 'overview') return `<div class="drawer-pane active"><div class="detail-grid"><div class="detail"><span>课包剩余</span><b>${s.hoursLeft}/${s.hoursTotal} 课时</b></div><div class="detail"><span>下一个节点</span><b>${s.nextNode}</b></div><div class="detail"><span>企微绑定</span><b>${s.wecom}</b></div><div class="detail"><span>作业完成率</span><b>${s.study.homework}%</b></div><div class="detail"><span>本月上课</span><b>${s.reward.qinxue}/${s.reward.target} 节</b></div><div class="detail"><span>经营状态</span><b>${s.order.intention}</b></div></div><section class="card"><div class="card-hd"><div class="card-title">当前待办</div></div><div class="card-bd"><div class="queue">${state.tasks.filter(t=>t.studentId===s.id && t.status!=='已完成').map(t=>`<div class="queue-item"><div><span class="priority ${priorityClass(t.priority)}">${priorityText(t.priority)}</span></div><div><b>${t.type}</b><div class="queue-evidence">${t.evidence}<br>${t.action}</div></div><button class="btn primary" onclick="openContactModal('${s.id}','${t.type}')">处理</button></div>`).join('') || '<div class="empty-tip">暂无未完成待办</div>'}</div></div></section></div>`;
+      if (state.drawerTab === 'study') return `<div class="drawer-pane active"><div class="detail-grid"><div class="detail"><span>到课节数</span><b>${s.study.attendance}</b></div><div class="detail"><span>课前预习</span><b>${s.study.preview}%</b></div><div class="detail"><span>连续覆盖天数</span><b>${s.study.days} 天</b></div></div><section class="card"><div class="card-hd"><div class="card-title">课程列表</div></div><table><thead><tr><th>课程</th><th>时间</th><th>状态</th><th>学习任务</th><th>老师</th></tr></thead><tbody>${s.courses.map(c=>`<tr><td>${c.title}</td><td>${c.time}</td><td>${c.status}</td><td>${c.homework}</td><td>${c.teacher}</td></tr>`).join('')}</tbody></table></section></div>`;
+      if (state.drawerTab === 'records') return `<div class="drawer-pane active"><section class="card"><div class="card-hd"><div class="card-title">家长联系时间线</div><button class="btn primary" onclick="openContactModal('${s.id}','新增联系')">+ 新增记录</button></div><div class="card-bd"><ul class="timeline">${s.notes.map(n=>`<li><b>${n.time}｜${n.title}</b><br>${n.text}</li>`).join('')}</ul></div></section></div>`;
+      if (state.drawerTab === 'nodes') return `<div class="drawer-pane active"><section class="card"><div class="card-hd"><div class="card-title">服务节点</div></div><table><thead><tr><th>节点</th><th>状态</th><th>截止</th><th>说明</th><th>操作</th></tr></thead><tbody>${s.nodes.map(n=>nodeRowHtml(s,n)).join('')}</tbody></table></section></div>`;
+      if (state.drawerTab === 'rewards') return `<div class="drawer-pane active"><div class="detail-grid"><div class="detail"><span>海报任务</span><b>${s.reward.poster}</b></div><div class="detail"><span>勤学奖进度</span><b>${s.reward.qinxue}/${s.reward.target}</b></div><div class="detail"><span>当前判断</span><b>${s.reward.gift}</b></div></div><div class="notice warning"><span>📌</span><div>奖励口径以活动配置为准，原型只展示进度和人工跟进入口，不自动发放赠课。</div></div></div>`;
+      return `<div class="drawer-pane active"><section class="card"><div class="card-hd"><div class="card-title">订单与课包</div></div><div class="card-bd"><div class="detail-grid"><div class="detail"><span>最新订单</span><b>${s.order.latest}</b></div><div class="detail"><span>补差状态</span><b>${s.order.buCha}</b></div><div class="detail"><span>经营意向</span><b>${s.order.intention}</b></div></div><div class="notice warning"><span>⚠️</span><div>补差/续费仅记录意向和下一步，不模拟支付、价格规则或订单创建。</div></div></div></section></div>`;
+    }
+
+    function showModal(html, small=false) { $('#modal').className = 'modal' + (small ? ' small' : ''); $('#modal').innerHTML = html; $('#modalMask').classList.add('show'); }
+    function closeModal() { $('#modalMask').classList.remove('show'); }
+    $('#modalMask').addEventListener('click', e => { if (e.target === $('#modalMask')) closeModal(); });
+
+    function openContactModal(studentId, source) {
+      const s = studentById(studentId);
+      showModal(`<div class="modal-hd">联系家长并记录结果 <button class="close" onclick="closeModal()">×</button></div><div class="modal-bd"><div class="notice"><span>📞</span><div><b>${s.name}｜${source}</b><br>提交后会把记录写入学生联系时间线，并将相关待办更新为“已完成”。</div></div><div class="form-grid"><div class="field"><label>联系渠道</label><select id="contactChannel"><option>电话</option><option>企微</option><option>微信</option><option>短信</option></select></div><div class="field"><label>沟通结果</label><select id="contactResult"><option>已沟通并达成下一步</option><option>家长未接通</option><option>待家长反馈</option><option>已解决问题</option></select></div><div class="field full"><label>沟通备注</label><textarea id="contactNote" placeholder="例如：已提醒本周约课；家长反馈周五可上课；已同步补差优惠信息。"></textarea><div class="error" id="contactError">请填写沟通备注，便于后续跟进</div></div><div class="field"><label>下次跟进时间</label><input id="nextTime" type="datetime-local" value="2026-09-25T19:30"></div><div class="field"><label>待办处理</label><select id="taskPolicy"><option>完成该学生相关待办</option><option>保留待办，设置下次跟进</option></select></div></div></div><div class="modal-ft"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="submitContact('${studentId}','${source}')">提交记录</button></div>`);
+    }
+
+    function submitContact(studentId, source) {
+      const note = $('#contactNote').value.trim();
+      if (!note) { $('#contactError').classList.add('show'); return; }
+      const s = studentById(studentId);
+      const channel = $('#contactChannel').value;
+      const result = $('#contactResult').value;
+      s.notes.unshift({ time:'刚刚', title:`${channel}｜${source}`, text:`${result}：${note}；下次跟进 ${$('#nextTime').value.replace('T',' ')}` });
+      if ($('#taskPolicy').value.includes('完成')) state.tasks.forEach(t => { if (t.studentId === studentId && (t.type === source || source === '快速记录' || source === '档案跟进' || source === '列表跟进' || source === '新增联系')) t.status = '已完成'; });
+      closeModal(); renderAll(); if ($('#studentDrawer').classList.contains('open')) renderDrawer(); toast('✅ 已记录联系结果，并同步更新待办状态');
+    }
+
+    function openScheduleModal(studentId) {
+      const s = studentById(studentId);
+      showModal(`<div class="modal-hd">帮学生约课 <button class="close" onclick="closeModal()">×</button></div><div class="modal-bd"><div class="notice"><span>📚</span><div><b>${s.name}</b><br>本弹窗只做约课意向模拟，不进行真实老师可约性、时间冲突或排课同步校验。</div></div><div class="form-grid"><div class="field"><label>推荐课程</label><select id="courseName"><option>自然拼读下一单元</option><option>口语主题课</option><option>绘本精读课</option></select></div><div class="field"><label>上课时间</label><input id="courseTime" type="datetime-local" value="2026-09-27T19:30"></div><div class="field"><label>推荐老师</label><select><option>沿用原老师</option><option>系统推荐老师</option><option>家长指定老师</option></select></div><div class="field"><label>课前提醒</label><select><option>需要课前提醒</option><option>无需提醒</option></select></div></div></div><div class="modal-ft"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="submitSchedule('${studentId}')">确认模拟约课</button></div>`);
+    }
+    function submitSchedule(studentId) {
+      const s = studentById(studentId);
+      s.courses.push({ title: $('#courseName').value, time: $('#courseTime').value.replace('T',' ').slice(5), status:'已约课', homework:'课前预习待完成', teacher:'待确认' });
+      closeModal(); renderAll(); if ($('#studentDrawer').classList.contains('open')) renderDrawer(); toast('✅ 已模拟新增约课记录');
+    }
+
+    function openIntentModal(studentId) {
+      const s = studentById(studentId);
+      showModal(`<div class="modal-hd">记录补差 / 续费意向 <button class="close" onclick="closeModal()">×</button></div><div class="modal-bd"><div class="notice warning"><span>⚠️</span><div>这里只记录经营意向和下一步动作，不创建真实订单、不触发支付、不承诺优惠规则。</div></div><div class="form-grid"><div class="field"><label>意向类型</label><select id="intentType"><option>补差高意向</option><option>续费待沟通</option><option>暂不考虑</option><option>待家长反馈</option></select></div><div class="field"><label>下一步时间</label><input type="datetime-local" value="2026-09-26T20:00"></div><div class="field full"><label>备注</label><textarea id="intentNote" placeholder="记录家长关心点、报价口径、需要谁协助等"></textarea></div></div></div><div class="modal-ft"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="submitIntent('${studentId}')">保存意向</button></div>`);
+    }
+    function submitIntent(studentId) {
+      const s = studentById(studentId);
+      s.order.intention = $('#intentType').value;
+      s.notes.unshift({ time:'刚刚', title:'经营意向记录', text: `${s.order.intention}：${$('#intentNote').value || '已记录下一步跟进。'}` });
+      closeModal(); renderAll(); if ($('#studentDrawer').classList.contains('open')) renderDrawer(); toast('✅ 已保存补差/续费意向');
+    }
+
+    function updateCourse(studentId, index) {
+      const s = studentById(studentId);
+      const c = s.courses[index];
+      c.homework = c.homework.includes('未') || c.homework.includes('待') ? '学习任务已完成' : '课后作业未完成';
+      renderAll(); if ($('#studentDrawer').classList.contains('open')) renderDrawer(); toast('✅ 已模拟更新课程/作业状态');
+    }
+    function completeNode(studentId, nodeName) {
+      const s = studentById(studentId);
+      const n = s.nodes.find(x => x.name === nodeName);
+      if (n) { n.status = '已完成'; n.due = '刚刚完成'; s.notes.unshift({ time:'刚刚', title:`服务节点：${nodeName}`, text:'已记录处理结果，后续按下次跟进时间继续服务。' }); }
+      state.tasks.forEach(t => { if (t.studentId === studentId && (t.type === nodeName || nodeName.includes(t.type) || t.type.includes(nodeName))) t.status = '已完成'; });
+      renderAll(); if ($('#studentDrawer').classList.contains('open')) renderDrawer(); toast('✅ 服务节点已模拟完成');
+    }
+
+    function filterTaskType(type) { state.filter.taskType = type; renderDashboard(); }
+    function resetStudentFilter() { state.filter.keyword = ''; state.filter.risk = '全部'; state.filter.wecom = '全部'; state.filter.package = '全部'; renderStudents(); }
+    function switchView(id) {
+      state.currentView = id;
+      $$('.view').forEach(v => v.classList.toggle('active', v.id === id));
+      $$('.menu-item').forEach(m => m.classList.toggle('active', m.dataset.view === id));
+      $('#crumb').textContent = viewNames[id];
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    function toast(msg) { const el = $('#toast'); el.textContent = msg; el.classList.add('show'); setTimeout(() => el.classList.remove('show'), 2400); }
+
+    $$('.menu-item').forEach(item => item.addEventListener('click', () => switchView(item.dataset.view)));
+    renderAll();
+  </script>
+</body>
+</html>
