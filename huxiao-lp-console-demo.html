@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>虎校 LP 管台原型 Demo</title>
+  <title>虎校 LP 管台</title>
   <style>
     :root {
       --primary: #1677ff;
@@ -39,10 +39,21 @@
     }
     button, input, select, textarea { font-family: inherit; }
     .layout { display: flex; min-height: 100vh; }
-    .sidebar { width: 232px; background: var(--sidebar); color: rgba(255,255,255,.82); flex-shrink: 0; position: sticky; top: 0; height: 100vh; overflow: auto; }
-    .brand { height: 58px; display:flex; align-items:center; padding: 0 20px; border-bottom: 1px solid rgba(255,255,255,.08); color: #fff; font-weight: 700; }
-    .brand-icon { width: 30px; height: 30px; border-radius: 9px; background: linear-gradient(135deg, #1677ff, #36cfc9); display:inline-flex; align-items:center; justify-content:center; margin-right:10px; }
-    .demo-pill { margin-left: auto; font-size: 11px; color: #b9d7ff; background: rgba(22,119,255,.18); border: 1px solid rgba(64,150,255,.24); border-radius: 999px; padding: 3px 7px; }
+    .sidebar { width: 232px; background: var(--sidebar); color: rgba(255,255,255,.82); flex-shrink: 0; position: sticky; top: 0; height: 100vh; overflow: auto; overflow-x: hidden; transition: width .2s ease; }
+    .brand { height: 58px; display:flex; align-items:center; gap: 10px; padding: 0 12px 0 20px; border-bottom: 1px solid rgba(255,255,255,.08); color: #fff; font-weight: 700; white-space: nowrap; }
+    .brand-icon { width: 30px; height: 30px; border-radius: 9px; background: linear-gradient(135deg, #1677ff, #36cfc9); display:inline-flex; align-items:center; justify-content:center; flex: 0 0 30px; }
+    .brand-text { overflow:hidden; text-overflow:ellipsis; }
+    .sidebar-toggle { margin-left:auto; width: 30px; height: 30px; border: 0; border-radius: 8px; background: rgba(255,255,255,.08); color:#fff; cursor:pointer; display:grid; place-items:center; flex: 0 0 30px; }
+    .sidebar-toggle:hover { background: rgba(255,255,255,.14); }
+    .layout.sidebar-collapsed .sidebar { width: 68px; }
+    .layout.sidebar-collapsed .brand { justify-content:flex-start; gap:0; padding: 0 4px; }
+    .layout.sidebar-collapsed .brand-text, .layout.sidebar-collapsed .menu-section { display:none; }
+    .layout.sidebar-collapsed .brand-icon { margin:0; }
+    .layout.sidebar-collapsed .sidebar-toggle { box-shadow: 0 4px 14px rgba(0,0,0,.2); }
+    .layout.sidebar-collapsed .menu { padding: 12px 8px 24px; }
+    .layout.sidebar-collapsed .menu-item { justify-content:center; padding:0; gap:0; }
+    .layout.sidebar-collapsed .menu-item .menu-label { display:none; }
+    .layout.sidebar-collapsed .menu-icon { width:auto; font-size:18px; }
     .menu { padding: 12px 8px 24px; }
     .menu-section { color: rgba(255,255,255,.42); font-size: 12px; padding: 14px 12px 8px; }
     .menu-item { height: 40px; display:flex; align-items:center; gap: 10px; padding: 0 12px; border-radius: 8px; cursor:pointer; margin-bottom:4px; user-select: none; }
@@ -206,7 +217,9 @@
     }
     @media (max-width: 780px) {
       .layout { display:block; }
-      .sidebar { position:relative; width:100%; height:auto; }
+      .sidebar, .layout.sidebar-collapsed .sidebar { position:relative; width:100%; height:auto; }
+      .layout.sidebar-collapsed .brand-text, .layout.sidebar-collapsed .menu-section, .layout.sidebar-collapsed .menu-item .menu-label { display:initial; }
+      .layout.sidebar-collapsed .sidebar-toggle { position:static; box-shadow:none; }
       .menu { display:flex; overflow:auto; padding:8px; }
       .menu-section { display:none; }
       .menu-item { flex:0 0 auto; }
@@ -223,20 +236,20 @@
 </head>
 <body>
   <div class="toast" id="toast"></div>
-  <div class="layout">
+  <div class="layout" id="layout">
     <aside class="sidebar">
-      <div class="brand"><span class="brand-icon">虎</span>虎校 LP 管台 <span class="demo-pill">Demo</span></div>
+      <div class="brand"><span class="brand-icon">虎</span><span class="brand-text">虎校 LP 管台</span><button class="sidebar-toggle" id="sidebarToggle" title="收起侧边栏" aria-label="收起侧边栏">‹</button></div>
       <div class="menu">
         <div class="menu-section">日常服务</div>
-        <div class="menu-item active" data-view="dashboard"><span class="menu-icon">🏠</span>LP 工作台</div>
-        <div class="menu-item" data-view="students"><span class="menu-icon">👧</span>我的学生</div>
-        <div class="menu-item" data-view="courses"><span class="menu-icon">📚</span>课程与约课</div>
+        <div class="menu-item active" data-view="dashboard"><span class="menu-icon">🏠</span><span class="menu-label">LP 工作台</span></div>
+        <div class="menu-item" data-view="students"><span class="menu-icon">👧</span><span class="menu-label">我的学生</span></div>
+        <div class="menu-item" data-view="courses"><span class="menu-icon">📚</span><span class="menu-label">课程与约课</span></div>
         <div class="menu-section">经营跟进</div>
-        <div class="menu-item" data-view="nodes"><span class="menu-icon">🧭</span>服务节点</div>
-        <div class="menu-item" data-view="rewards"><span class="menu-icon">🎁</span>活动与奖励</div>
-        <div class="menu-item" data-view="orders"><span class="menu-icon">💳</span>订单与课包</div>
+        <div class="menu-item" data-view="nodes"><span class="menu-icon">🧭</span><span class="menu-label">服务节点</span></div>
+        <div class="menu-item" data-view="rewards"><span class="menu-icon">🎁</span><span class="menu-label">活动与奖励</span></div>
+        <div class="menu-item" data-view="orders"><span class="menu-icon">💳</span><span class="menu-label">订单与课包</span></div>
         <div class="menu-section">个人管理</div>
-        <div class="menu-item" data-view="review"><span class="menu-icon">📈</span>个人复盘</div>
+        <div class="menu-item" data-view="review"><span class="menu-icon">📈</span><span class="menu-label">个人复盘</span></div>
       </div>
     </aside>
 
@@ -246,8 +259,6 @@
         <div class="user"><span>LP 王老师｜今日 2026-09-24</span><div class="avatar">王</div></div>
       </div>
       <div class="content">
-        <div class="notice"><span>💡</span><div><b>原型演示说明：</b>页面数据和操作均为 Mock，不触发真实电话、企微消息、排课、赠课发放、支付或系统同步。核心演示 LP 如何完成“发现待办 → 查看依据 → 联系家长 → 记录结果 → 安排下一步”的闭环。</div></div>
-
         <section class="view active" id="dashboard"></section>
         <section class="view" id="students"></section>
         <section class="view" id="courses"></section>
@@ -344,8 +355,8 @@
       renderDashboard(); renderStudents(); renderCourses(); renderNodes(); renderRewards(); renderOrders(); renderReview();
     }
 
-    function pageHead(title, desc, action = '') {
-      return `<div class="page-head"><div><h1>${title}</h1><p class="desc">${desc}</p></div><div class="toolbar">${action}</div></div>`;
+    function pageHead(title, desc = '', action = '') {
+      return `<div class="page-head"><div><h1>${title}</h1></div><div class="toolbar">${action}</div></div>`;
     }
 
     function renderDashboard() {
@@ -354,18 +365,17 @@
       const high = openTasks().filter(t => t.priority === 'high').length;
       const soon = state.students.filter(s => s.hoursLeft <= 20).length;
       $('#dashboard').innerHTML = `
-        ${pageHead('LP 工作台', '先处理最需要关注的学生：系统把服务节点、课消、约课、奖励和经营机会汇成今日跟进队列。', '<button class="btn soft" onclick="openContactModal(\'s1\',\'快速记录\')">+ 快速记录 Follow</button>')}
+        ${pageHead('LP 工作台', '', '<button class="btn soft" onclick="openContactModal(\'s1\',\'快速记录\')">+ 快速记录 Follow</button>')}
         <section class="stats">
-          <div class="stat-card"><div class="stat-label">今日待处理 <span class="tag orange">实时</span></div><div class="stat-num">${openTasks().length}</div><div class="stat-note">按截止时间和风险排序</div></div>
-          <div class="stat-card"><div class="stat-label">高优任务</div><div class="stat-num">${high}</div><div class="stat-note">优先联系家长或处理异常</div></div>
-          <div class="stat-card"><div class="stat-label">课包≤20课时</div><div class="stat-num">${soon}</div><div class="stat-note">需关注续费/到期节奏</div></div>
-          <div class="stat-card"><div class="stat-label">今日已闭环</div><div class="stat-num">${done}</div><div class="stat-note">完成后沉淀进联系时间线</div></div>
+          <div class="stat-card"><div class="stat-label">今日待处理 <span class="tag orange">实时</span></div><div class="stat-num">${openTasks().length}</div></div>
+          <div class="stat-card"><div class="stat-label">高优任务</div><div class="stat-num">${high}</div></div>
+          <div class="stat-card"><div class="stat-label">课包≤20课时</div><div class="stat-num">${soon}</div></div>
+          <div class="stat-card"><div class="stat-label">今日已完成</div><div class="stat-num">${done}</div></div>
         </section>
         <div class="two-col">
-          <section class="card"><div class="card-hd"><div><div class="card-title">今日跟进队列</div><div class="sub">不是只看数量，而是直接告诉 LP “谁、为什么、做什么”。</div></div><select onchange="filterTaskType(this.value)"><option>全部</option><option>课包到期提醒</option><option>补差节点</option><option>首课</option><option>复课提醒</option><option>问题课程</option></select></div><div class="card-bd"><div class="queue">${taskQueueHtml()}</div></div></section>
+          <section class="card"><div class="card-hd"><div><div class="card-title">今日跟进队列</div></div><select onchange="filterTaskType(this.value)"><option>全部</option><option>课包到期提醒</option><option>补差节点</option><option>首课</option><option>复课提醒</option><option>问题课程</option></select></div><div class="card-bd"><div class="queue">${taskQueueHtml()}</div></div></section>
           <section class="card"><div class="card-hd"><div class="card-title">重点学生概览</div><button class="btn text" onclick="switchView('students')">查看全部</button></div><div class="card-bd"><div class="three-col">${state.students.slice(0,3).map(studentMiniHtml).join('')}</div></div></section>
         </div>
-        <section class="card"><div class="card-hd"><div><div class="card-title">服务闭环主线</div><div class="sub">原型的主交互路径：从待办进入学生档案，处理后同步更新状态。</div></div></div><div class="card-bd"><div class="three-col"><div class="mini-card"><b>1. 发现</b><span>待办基于服务节点、课包、约课、作业、奖励进度和经营机会触发。</span></div><div class="mini-card"><b>2. 处理</b><span>查看学生档案里的依据，一键联系家长、约课、催作业或记录经营意向。</span></div><div class="mini-card"><b>3. 闭环</b><span>提交沟通结果后，更新待办状态、联系时间线和下一次跟进时间。</span></div></div></div></section>
       `;
     }
 
@@ -384,7 +394,7 @@
 
     function renderStudents() {
       $('#students').innerHTML = `
-        ${pageHead('我的学生', '围绕 LP 负责学生建立服务视图：课包、学情、家长联系、奖励进度和下一个节点集中展示。')}
+        ${pageHead('我的学生')}
         <section class="card"><div class="card-hd"><div class="card-title">筛选条件</div><button class="btn" onclick="resetStudentFilter()">重置</button></div><div class="card-bd"><div class="filters"><div class="field"><label>学生 / 家长 / ID</label><input id="keyword" placeholder="输入 Ethan / 家长 / SID" oninput="state.filter.keyword=this.value; renderStudents()" value="${state.filter.keyword}" /></div><div class="field"><label>风险类型</label><select onchange="state.filter.risk=this.value; renderStudents()"><option ${state.filter.risk==='全部'?'selected':''}>全部</option><option ${state.filter.risk==='高风险'?'selected':''}>高风险</option><option ${state.filter.risk==='中风险'?'selected':''}>中风险</option><option ${state.filter.risk==='经营机会'?'selected':''}>经营机会</option></select></div><div class="field"><label>企微状态</label><select onchange="state.filter.wecom=this.value; renderStudents()"><option ${state.filter.wecom==='全部'?'selected':''}>全部</option><option ${state.filter.wecom==='已绑定'?'selected':''}>已绑定</option><option ${state.filter.wecom==='未绑定'?'selected':''}>未绑定</option></select></div><div class="field"><label>课包状态</label><select onchange="state.filter.package=this.value; renderStudents()"><option ${state.filter.package==='全部'?'selected':''}>全部</option><option ${state.filter.package==='剩余≤20课时'?'selected':''}>剩余≤20课时</option><option ${state.filter.package==='补差期'?'selected':''}>补差期</option><option ${state.filter.package==='请假/休学后'?'selected':''}>请假/休学后</option></select></div><button class="btn primary" onclick="renderStudents()">查询</button><button class="btn" onclick="resetStudentFilter()">清除</button></div></div></section>
         <section class="card"><div class="card-hd"><div class="card-title">学生列表</div><div class="muted">共 ${filteredStudents().length} 名</div></div><div class="table-wrap"><table><thead><tr><th>学生</th><th>家长/企微</th><th>当前课包</th><th>课消与学情</th><th>奖励/活动</th><th>下一节点</th><th>操作</th></tr></thead><tbody>${filteredStudents().map(studentRowHtml).join('')}</tbody></table></div></section>
       `;
@@ -401,7 +411,7 @@
     }
 
     function renderCourses() {
-      $('#courses').innerHTML = `${pageHead('课程与约课', '集中处理待约课、课前提醒、课后反馈和学习任务。这里仅模拟操作，不做真实排课冲突校验。', '<button class="btn primary" onclick="openScheduleModal(\'s3\')">+ 帮学生约课</button>')}
+      $('#courses').innerHTML = `${pageHead('课程与约课', '', '<button class="btn primary" onclick="openScheduleModal(\'s3\')">+ 帮学生约课</button>')}
         <section class="card"><div class="card-hd"><div class="card-title">近期课程跟进</div><span class="tag blue">课前 / 课后 / 作业状态</span></div><div class="table-wrap"><table><thead><tr><th>学生</th><th>课程</th><th>时间</th><th>老师</th><th>课程状态</th><th>学习任务</th><th>操作</th></tr></thead><tbody>${state.students.flatMap(s => s.courses.map((c,i) => courseRowHtml(s,c,i))).join('')}</tbody></table></div></section>`;
     }
 
@@ -415,8 +425,7 @@
 
     function renderNodes() {
       const activeNodes = ['首通','问题课程','首课','课包到期提醒','补差节点','首单元','CF03','月度回访'];
-      $('#nodes').innerHTML = `${pageHead('服务节点', '把服务节点当成可追踪任务：每个节点都应有触发原因、截止时间、处理动作和关闭状态。')}
-      <div class="notice warning"><span>⚠️</span><div><b>边界说明：</b>UA 节点、升级节点、续费节点目前仅作为二期规划展示，不在本原型中提供可执行处理流程。</div></div>
+      $('#nodes').innerHTML = `${pageHead('服务节点')}
       <section class="card"><div class="card-hd"><div class="card-title">已纳入本期服务节点</div></div><div class="card-bd"><div class="three-col">${activeNodes.map(n => `<div class="mini-card"><b>${n}</b><span>${nodeDesc(n)}</span></div>`).join('')}</div></div></section>
       <section class="card"><div class="card-hd"><div class="card-title">学生节点明细</div></div><div class="table-wrap"><table><thead><tr><th>学生</th><th>节点</th><th>状态</th><th>截止时间</th><th>触发依据</th><th>操作</th></tr></thead><tbody>${state.students.flatMap(s => s.nodes.map(n => nodeRowHtml(s,n))).join('')}${state.plannedNodes.map(n => `<tr class="disabled-node"><td>-</td><td>${n}</td><td><span class="tag gray">规划中</span></td><td>-</td><td>二期规划，暂未开发</td><td><button class="btn" disabled>暂不可处理</button></td></tr>`).join('')}</tbody></table></div></section>`;
     }
@@ -431,25 +440,24 @@
     }
 
     function renderRewards() {
-      $('#rewards').innerHTML = `${pageHead('活动与奖励', '展示海报分享、勤学奖/赠课进度与人工跟进动作。奖励规则可能随活动变化，原型不写死统一算法。')}
-      <div class="notice warning"><span>📌</span><div><b>规则边界：</b>朋友圈海报任务、勤学奖和赠课不是固定规则；这里按模拟活动口径展示当前进度，不自动判定真实资格或发放赠课。</div></div>
+      $('#rewards').innerHTML = `${pageHead('活动与奖励')}
       <section class="card"><div class="card-hd"><div class="card-title">奖励进度与催促</div></div><div class="table-wrap"><table><thead><tr><th>学生</th><th>活动</th><th>朋友圈海报</th><th>勤学奖进度</th><th>当前判断</th><th>操作</th></tr></thead><tbody>${state.students.map(s => `<tr><td><div class="student-cell"><div class="student-avatar">${s.en[0]}</div><div><b>${s.name}</b><div class="sub">${s.parent}</div></div></div></td><td>${s.reward.campaign}</td><td><span class="tag ${s.reward.poster.includes('未')?'orange':s.reward.poster.includes('2/2')?'green':'blue'}">${s.reward.poster}</span></td><td><span class="progress ${s.reward.qinxue>=s.reward.target?'green':s.reward.qinxue>=9?'orange':'red'}"><i style="width:${Math.min(100,Math.round(s.reward.qinxue/s.reward.target*100))}%"></i></span>${s.reward.qinxue}/${s.reward.target}</td><td>${s.reward.gift}</td><td><button class="btn text" onclick="openContactModal('${s.id}','奖励催促')">催促并记录</button><button class="btn text" onclick="openDrawer('${s.id}','rewards')">看详情</button></td></tr>`).join('')}</tbody></table></div></section>`;
     }
 
     function renderOrders() {
-      $('#orders').innerHTML = `${pageHead('订单与课包', '服务过程里查看课包、剩余课时、到期、补差和续费意向；本原型只记录意向，不模拟真实支付或订单创建。')}
+      $('#orders').innerHTML = `${pageHead('订单与课包')}
         <section class="card"><div class="card-hd"><div class="card-title">课包与经营机会</div></div><div class="table-wrap"><table><thead><tr><th>学生</th><th>最新订单</th><th>课包进度</th><th>补差状态</th><th>续费/经营意向</th><th>请假/休学/复课</th><th>操作</th></tr></thead><tbody>${state.students.map(orderRowHtml).join('')}</tbody></table></div></section>`;
     }
     function orderRowHtml(s) {
-      return `<tr><td>${s.name}<div class="sub">${s.parent}｜${s.phone}</div></td><td>${s.order.latest}</td><td>${s.package}<div class="sub">剩余 ${s.hoursLeft}/${s.hoursTotal}｜${s.endDate} 到期</div></td><td>${s.order.buCha}</td><td><span class="tag ${s.order.intention.includes('高意向')?'purple':s.order.intention.includes('待')?'orange':'blue'}">${s.order.intention}</span></td><td><span class="tag gray">只展示入口/记录</span><div class="sub">不做资格与扣课判断</div></td><td><button class="btn text" onclick="openIntentModal('${s.id}')">记录意向</button><button class="btn text" onclick="openDrawer('${s.id}','orders')">查看</button></td></tr>`;
+      return `<tr><td>${s.name}<div class="sub">${s.parent}｜${s.phone}</div></td><td>${s.order.latest}</td><td>${s.package}<div class="sub">剩余 ${s.hoursLeft}/${s.hoursTotal}｜${s.endDate} 到期</div></td><td>${s.order.buCha}</td><td><span class="tag ${s.order.intention.includes('高意向')?'purple':s.order.intention.includes('待')?'orange':'blue'}">${s.order.intention}</span></td><td><span class="tag gray">请假/复课记录</span></td><td><button class="btn text" onclick="openIntentModal('${s.id}')">记录意向</button><button class="btn text" onclick="openDrawer('${s.id}','orders')">查看</button></td></tr>`;
     }
 
     function renderReview() {
       const total = state.tasks.length;
       const done = state.tasks.filter(t => t.status === '已完成').length;
-      $('#review').innerHTML = `${pageHead('个人复盘', '帮助 LP 回看一周工作闭环情况，重点是可行动指标，不把少量数字强行做成复杂图表。')}
-      <section class="stats"><div class="stat-card"><div class="stat-label">本周联系家长</div><div class="stat-num">18</div><div class="stat-note">电话/企微/微信记录合计</div></div><div class="stat-card"><div class="stat-label">待办闭环率</div><div class="stat-num">${Math.round(done/total*100)}%</div><div class="stat-note">Demo 当前状态</div></div><div class="stat-card"><div class="stat-label">高风险学生</div><div class="stat-num">${state.students.filter(s=>s.risk==='高风险').length}</div><div class="stat-note">需优先跟进</div></div><div class="stat-card"><div class="stat-label">经营机会</div><div class="stat-num">${state.students.filter(s=>s.risk==='经营机会').length}</div><div class="stat-note">补差 / 续费 / 赠课关联</div></div></section>
-      <div class="two-col"><section class="card"><div class="card-hd"><div class="card-title">任务处理分布</div></div><div class="card-bd"><div class="meter"><div class="meter-row"><span>已完成</span><div class="bar green"><i style="width:${done/total*100}%"></i></div><b>${done}</b></div><div class="meter-row"><span>待处理</span><div class="bar orange"><i style="width:${state.tasks.filter(t=>t.status==='待处理').length/total*100}%"></i></div><b>${state.tasks.filter(t=>t.status==='待处理').length}</b></div><div class="meter-row"><span>逾期</span><div class="bar"><i style="width:${state.tasks.filter(t=>t.status==='逾期').length/total*100}%;background:var(--danger)"></i></div><b>${state.tasks.filter(t=>t.status==='逾期').length}</b></div></div><div class="sub" style="margin-top:12px">所有数值均为原型演示数据；真实系统应按业务口径计算。</div></div></section><section class="card"><div class="card-hd"><div class="card-title">下一步建议</div></div><div class="card-bd"><ul class="timeline"><li><b>先处理高优任务</b><br>课包到期、补差高意向、逾期问题课程应优先进入联系闭环。</li><li><b>补齐未绑定企微</b><br>新生承接阶段优先完成家长企微绑定，减少后续触达断点。</li><li><b>复盘奖励催促效果</b><br>海报和勤学奖仅做活动进度展示，真实规则需业务配置。</li></ul></div></section></div>`;
+      $('#review').innerHTML = `${pageHead('个人复盘')}
+      <section class="stats"><div class="stat-card"><div class="stat-label">本周联系家长</div><div class="stat-num">18</div><div class="stat-note">电话/企微/微信记录合计</div></div><div class="stat-card"><div class="stat-label">待办完成率</div><div class="stat-num">${Math.round(done/total*100)}%</div><div class="stat-note">按当前任务状态计算</div></div><div class="stat-card"><div class="stat-label">高风险学生</div><div class="stat-num">${state.students.filter(s=>s.risk==='高风险').length}</div><div class="stat-note">需优先跟进</div></div><div class="stat-card"><div class="stat-label">经营机会</div><div class="stat-num">${state.students.filter(s=>s.risk==='经营机会').length}</div><div class="stat-note">补差 / 续费 / 赠课关联</div></div></section>
+      <div class="two-col"><section class="card"><div class="card-hd"><div class="card-title">任务处理分布</div></div><div class="card-bd"><div class="meter"><div class="meter-row"><span>已完成</span><div class="bar green"><i style="width:${done/total*100}%"></i></div><b>${done}</b></div><div class="meter-row"><span>待处理</span><div class="bar orange"><i style="width:${state.tasks.filter(t=>t.status==='待处理').length/total*100}%"></i></div><b>${state.tasks.filter(t=>t.status==='待处理').length}</b></div><div class="meter-row"><span>逾期</span><div class="bar"><i style="width:${state.tasks.filter(t=>t.status==='逾期').length/total*100}%;background:var(--danger)"></i></div><b>${state.tasks.filter(t=>t.status==='逾期').length}</b></div></div></div></section><section class="card"><div class="card-hd"><div class="card-title">下一步建议</div></div><div class="card-bd"><ul class="timeline"><li><b>先处理高优任务</b><br>课包到期、补差高意向、逾期问题课程应优先联系处理。</li><li><b>补齐未绑定企微</b><br>新生承接阶段优先完成家长企微绑定，减少后续触达断点。</li><li><b>复盘奖励催促效果</b><br>海报和勤学奖仅做活动进度展示，真实规则需业务配置。</li></ul></div></section></div>`;
     }
 
     function openDrawer(studentId, tab='overview') {
@@ -494,11 +502,11 @@
     }
     function drawerPaneHtml(s) {
       if (state.drawerTab === 'overview') return `<div class="drawer-pane active"><div class="detail-grid"><div class="detail"><span>课包剩余</span><b>${s.hoursLeft}/${s.hoursTotal} 课时</b></div><div class="detail"><span>下一个节点</span><b>${s.nextNode}</b></div><div class="detail"><span>企微绑定</span><b>${s.wecom}</b></div><div class="detail"><span>作业完成率</span><b>${s.study.homework}%</b></div><div class="detail"><span>本月上课</span><b>${s.reward.qinxue}/${s.reward.target} 节</b></div><div class="detail"><span>经营状态</span><b>${s.order.intention}</b></div></div><section class="card"><div class="card-hd"><div class="card-title">当前待办</div></div><div class="card-bd"><div class="queue">${state.tasks.filter(t=>t.studentId===s.id && t.status!=='已完成').map(t=>`<div class="queue-item"><div><span class="priority ${priorityClass(t.priority)}">${priorityText(t.priority)}</span></div><div><b>${t.type}</b><div class="queue-evidence">${t.evidence}<br>${t.action}</div></div><button class="btn primary" onclick="openContactModal('${s.id}','${t.type}')">处理</button></div>`).join('') || '<div class="empty-tip">暂无未完成待办</div>'}</div></div></section></div>`;
-      if (state.drawerTab === 'study') return `<div class="drawer-pane active"><div class="detail-grid"><div class="detail"><span>到课节数</span><b>${s.study.attendance}</b></div><div class="detail"><span>课前预习完成率</span><b>${s.study.preview}%</b></div><div class="detail"><span>连续覆盖天数</span><b>${s.study.days} 天</b></div></div><section class="card"><div class="card-hd"><div><div class="card-title">课程记录</div><div class="sub">按课次查看课程安排、授课状态、课前课后作业和课堂反馈</div></div><span class="tag blue">${s.courses.length} 条课程</span></div><div class="card-bd"><div class="course-list">${s.courses.map((c,i)=>courseDetailCardHtml(s,c,i)).join('')}</div></div></section></div>`;
+      if (state.drawerTab === 'study') return `<div class="drawer-pane active"><div class="detail-grid"><div class="detail"><span>到课节数</span><b>${s.study.attendance}</b></div><div class="detail"><span>课前预习完成率</span><b>${s.study.preview}%</b></div><div class="detail"><span>连续覆盖天数</span><b>${s.study.days} 天</b></div></div><section class="card"><div class="card-hd"><div><div class="card-title">课程记录</div></div><span class="tag blue">${s.courses.length} 条课程</span></div><div class="card-bd"><div class="course-list">${s.courses.map((c,i)=>courseDetailCardHtml(s,c,i)).join('')}</div></div></section></div>`;
       if (state.drawerTab === 'records') return `<div class="drawer-pane active"><section class="card"><div class="card-hd"><div class="card-title">家长联系时间线</div><button class="btn primary" onclick="openContactModal('${s.id}','新增联系')">+ 新增记录</button></div><div class="card-bd"><ul class="timeline">${s.notes.map(n=>`<li><b>${n.time}｜${n.title}</b><br>${n.text}</li>`).join('')}</ul></div></section></div>`;
       if (state.drawerTab === 'nodes') return `<div class="drawer-pane active"><section class="card"><div class="card-hd"><div class="card-title">服务节点</div></div><table><thead><tr><th>节点</th><th>状态</th><th>截止</th><th>说明</th><th>操作</th></tr></thead><tbody>${s.nodes.map(n=>nodeRowHtml(s,n)).join('')}</tbody></table></section></div>`;
-      if (state.drawerTab === 'rewards') return `<div class="drawer-pane active"><div class="detail-grid"><div class="detail"><span>海报任务</span><b>${s.reward.poster}</b></div><div class="detail"><span>勤学奖进度</span><b>${s.reward.qinxue}/${s.reward.target}</b></div><div class="detail"><span>当前判断</span><b>${s.reward.gift}</b></div></div><div class="notice warning"><span>📌</span><div>奖励口径以活动配置为准，原型只展示进度和人工跟进入口，不自动发放赠课。</div></div></div>`;
-      return `<div class="drawer-pane active"><section class="card"><div class="card-hd"><div class="card-title">订单与课包</div></div><div class="card-bd"><div class="detail-grid"><div class="detail"><span>最新订单</span><b>${s.order.latest}</b></div><div class="detail"><span>补差状态</span><b>${s.order.buCha}</b></div><div class="detail"><span>经营意向</span><b>${s.order.intention}</b></div></div><div class="notice warning"><span>⚠️</span><div>补差/续费仅记录意向和下一步，不模拟支付、价格规则或订单创建。</div></div></div></section></div>`;
+      if (state.drawerTab === 'rewards') return `<div class="drawer-pane active"><div class="detail-grid"><div class="detail"><span>海报任务</span><b>${s.reward.poster}</b></div><div class="detail"><span>勤学奖进度</span><b>${s.reward.qinxue}/${s.reward.target}</b></div><div class="detail"><span>当前判断</span><b>${s.reward.gift}</b></div></div></div>`;
+      return `<div class="drawer-pane active"><section class="card"><div class="card-hd"><div class="card-title">订单与课包</div></div><div class="card-bd"><div class="detail-grid"><div class="detail"><span>最新订单</span><b>${s.order.latest}</b></div><div class="detail"><span>补差状态</span><b>${s.order.buCha}</b></div><div class="detail"><span>经营意向</span><b>${s.order.intention}</b></div></div></div></section></div>`;
     }
 
     function showModal(html, small=false) { $('#modal').className = 'modal' + (small ? ' small' : ''); $('#modal').innerHTML = html; $('#modalMask').classList.add('show'); }
@@ -507,7 +515,7 @@
 
     function openContactModal(studentId, source) {
       const s = studentById(studentId);
-      showModal(`<div class="modal-hd">联系家长并记录结果 <button class="close" onclick="closeModal()">×</button></div><div class="modal-bd"><div class="notice"><span>📞</span><div><b>${s.name}｜${source}</b><br>提交后会把记录写入学生联系时间线，并将相关待办更新为“已完成”。</div></div><div class="form-grid"><div class="field"><label>联系渠道</label><select id="contactChannel"><option>电话</option><option>企微</option><option>微信</option><option>短信</option></select></div><div class="field"><label>沟通结果</label><select id="contactResult"><option>已沟通并达成下一步</option><option>家长未接通</option><option>待家长反馈</option><option>已解决问题</option></select></div><div class="field full"><label>沟通备注</label><textarea id="contactNote" placeholder="例如：已提醒本周约课；家长反馈周五可上课；已同步补差优惠信息。"></textarea><div class="error" id="contactError">请填写沟通备注，便于后续跟进</div></div><div class="field"><label>下次跟进时间</label><input id="nextTime" type="datetime-local" value="2026-09-25T19:30"></div><div class="field"><label>待办处理</label><select id="taskPolicy"><option>完成该学生相关待办</option><option>保留待办，设置下次跟进</option></select></div></div></div><div class="modal-ft"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="submitContact('${studentId}','${source}')">提交记录</button></div>`);
+      showModal(`<div class="modal-hd">联系家长并记录结果 <button class="close" onclick="closeModal()">×</button></div><div class="modal-bd"><div class="notice"><span>📞</span><div><b>${s.name}｜${source}</b></div></div><div class="form-grid"><div class="field"><label>联系渠道</label><select id="contactChannel"><option>电话</option><option>企微</option><option>微信</option><option>短信</option></select></div><div class="field"><label>沟通结果</label><select id="contactResult"><option>已沟通并达成下一步</option><option>家长未接通</option><option>待家长反馈</option><option>已解决问题</option></select></div><div class="field full"><label>沟通备注</label><textarea id="contactNote" placeholder="例如：已提醒本周约课；家长反馈周五可上课；已同步补差优惠信息。"></textarea><div class="error" id="contactError">请填写沟通备注，便于后续跟进</div></div><div class="field"><label>下次跟进时间</label><input id="nextTime" type="datetime-local" value="2026-09-25T19:30"></div><div class="field"><label>待办处理</label><select id="taskPolicy"><option>完成该学生相关待办</option><option>保留待办，设置下次跟进</option></select></div></div></div><div class="modal-ft"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="submitContact('${studentId}','${source}')">提交记录</button></div>`);
     }
 
     function submitContact(studentId, source) {
@@ -523,17 +531,17 @@
 
     function openScheduleModal(studentId) {
       const s = studentById(studentId);
-      showModal(`<div class="modal-hd">帮学生约课 <button class="close" onclick="closeModal()">×</button></div><div class="modal-bd"><div class="notice"><span>📚</span><div><b>${s.name}</b><br>本弹窗只做约课意向模拟，不进行真实老师可约性、时间冲突或排课同步校验。</div></div><div class="form-grid"><div class="field"><label>推荐课程</label><select id="courseName"><option>自然拼读下一单元</option><option>口语主题课</option><option>绘本精读课</option></select></div><div class="field"><label>上课时间</label><input id="courseTime" type="datetime-local" value="2026-09-27T19:30"></div><div class="field"><label>推荐老师</label><select><option>沿用原老师</option><option>系统推荐老师</option><option>家长指定老师</option></select></div><div class="field"><label>课前提醒</label><select><option>需要课前提醒</option><option>无需提醒</option></select></div></div></div><div class="modal-ft"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="submitSchedule('${studentId}')">确认模拟约课</button></div>`);
+      showModal(`<div class="modal-hd">帮学生约课 <button class="close" onclick="closeModal()">×</button></div><div class="modal-bd"><div class="notice"><span>📚</span><div><b>${s.name}</b></div></div><div class="form-grid"><div class="field"><label>推荐课程</label><select id="courseName"><option>自然拼读下一单元</option><option>口语主题课</option><option>绘本精读课</option></select></div><div class="field"><label>上课时间</label><input id="courseTime" type="datetime-local" value="2026-09-27T19:30"></div><div class="field"><label>推荐老师</label><select><option>沿用原老师</option><option>系统推荐老师</option><option>家长指定老师</option></select></div><div class="field"><label>课前提醒</label><select><option>需要课前提醒</option><option>无需提醒</option></select></div></div></div><div class="modal-ft"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="submitSchedule('${studentId}')">确认约课</button></div>`);
     }
     function submitSchedule(studentId) {
       const s = studentById(studentId);
       s.courses.push({ title: $('#courseName').value, lessonNo:'课次待分配', time: $('#courseTime').value.replace('T',' '), status:'已约课', teacher:'待确认', preClass:{status:'待完成',name:'课前预习'}, postClass:{status:'-',name:'课程完成后生成'}, feedback:'', exception:'' });
-      closeModal(); renderAll(); if ($('#studentDrawer').classList.contains('open')) renderDrawer(); toast('✅ 已模拟新增约课记录');
+      closeModal(); renderAll(); if ($('#studentDrawer').classList.contains('open')) renderDrawer(); toast('✅ 已新增约课记录');
     }
 
     function openIntentModal(studentId) {
       const s = studentById(studentId);
-      showModal(`<div class="modal-hd">记录补差 / 续费意向 <button class="close" onclick="closeModal()">×</button></div><div class="modal-bd"><div class="notice warning"><span>⚠️</span><div>这里只记录经营意向和下一步动作，不创建真实订单、不触发支付、不承诺优惠规则。</div></div><div class="form-grid"><div class="field"><label>意向类型</label><select id="intentType"><option>补差高意向</option><option>续费待沟通</option><option>暂不考虑</option><option>待家长反馈</option></select></div><div class="field"><label>下一步时间</label><input type="datetime-local" value="2026-09-26T20:00"></div><div class="field full"><label>备注</label><textarea id="intentNote" placeholder="记录家长关心点、报价口径、需要谁协助等"></textarea></div></div></div><div class="modal-ft"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="submitIntent('${studentId}')">保存意向</button></div>`);
+      showModal(`<div class="modal-hd">记录补差 / 续费意向 <button class="close" onclick="closeModal()">×</button></div><div class="modal-bd"><div class="form-grid"><div class="field"><label>意向类型</label><select id="intentType"><option>补差高意向</option><option>续费待沟通</option><option>暂不考虑</option><option>待家长反馈</option></select></div><div class="field"><label>下一步时间</label><input type="datetime-local" value="2026-09-26T20:00"></div><div class="field full"><label>备注</label><textarea id="intentNote" placeholder="记录家长关心点、报价口径、需要谁协助等"></textarea></div></div></div><div class="modal-ft"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="submitIntent('${studentId}')">保存意向</button></div>`);
     }
     function submitIntent(studentId) {
       const s = studentById(studentId);
@@ -554,14 +562,14 @@
         return;
       }
       if (c.postClass.status === '已完成') c.exception = '';
-      renderAll(); if ($('#studentDrawer').classList.contains('open')) renderDrawer(); toast('✅ 已模拟更新课前/课后作业状态');
+      renderAll(); if ($('#studentDrawer').classList.contains('open')) renderDrawer(); toast('✅ 已更新课前/课后作业状态');
     }
     function completeNode(studentId, nodeName) {
       const s = studentById(studentId);
       const n = s.nodes.find(x => x.name === nodeName);
       if (n) { n.status = '已完成'; n.due = '刚刚完成'; s.notes.unshift({ time:'刚刚', title:`服务节点：${nodeName}`, text:'已记录处理结果，后续按下次跟进时间继续服务。' }); }
       state.tasks.forEach(t => { if (t.studentId === studentId && (t.type === nodeName || nodeName.includes(t.type) || t.type.includes(nodeName))) t.status = '已完成'; });
-      renderAll(); if ($('#studentDrawer').classList.contains('open')) renderDrawer(); toast('✅ 服务节点已模拟完成');
+      renderAll(); if ($('#studentDrawer').classList.contains('open')) renderDrawer(); toast('✅ 服务节点已完成');
     }
 
     function filterTaskType(type) { state.filter.taskType = type; renderDashboard(); }
@@ -575,7 +583,17 @@
     }
     function toast(msg) { const el = $('#toast'); el.textContent = msg; el.classList.add('show'); setTimeout(() => el.classList.remove('show'), 2400); }
 
-    $$('.menu-item').forEach(item => item.addEventListener('click', () => switchView(item.dataset.view)));
+    $('#sidebarToggle').addEventListener('click', () => {
+      const collapsed = $('#layout').classList.toggle('sidebar-collapsed');
+      $('#sidebarToggle').textContent = collapsed ? '›' : '‹';
+      $('#sidebarToggle').title = collapsed ? '展开侧边栏' : '收起侧边栏';
+      $('#sidebarToggle').setAttribute('aria-label', collapsed ? '展开侧边栏' : '收起侧边栏');
+      $$('.menu-item').forEach(item => { item.title = collapsed ? item.querySelector('.menu-label').textContent : ''; });
+    });
+    $$('.menu-item').forEach(item => {
+      item.addEventListener('click', () => switchView(item.dataset.view));
+      item.title = $('#layout').classList.contains('sidebar-collapsed') ? item.querySelector('.menu-label').textContent : '';
+    });
     renderAll();
   </script>
 </body>
