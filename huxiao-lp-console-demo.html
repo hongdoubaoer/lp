@@ -209,8 +209,72 @@
     .bar.green i { background: var(--success); }
     .disabled-node { opacity:.55; }
 
+    /* 工作台三栏布局 */
+    .workbench { display:grid; grid-template-columns: minmax(430px, .92fr) minmax(360px, .78fr); gap:16px; align-items:start; }
+    .workbench-main { min-width:0; }
+    .workbench-side { min-width:0; position:sticky; top:78px; }
+    .workbench-head { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:14px; }
+    .workbench-head h1 { font-size:24px; }
+    .workbench-date { color:var(--sub-text); font-size:13px; margin-top:5px; }
+    .workbench-stats { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin-bottom:14px; }
+    .workbench-stat { background:#fff; border:1px solid var(--line); border-radius:10px; padding:12px 13px; box-shadow:0 4px 14px rgba(16,24,40,.04); }
+    .workbench-stat span { color:var(--sub-text); font-size:12px; }
+    .workbench-stat b { display:block; margin-top:5px; font-size:22px; line-height:1; }
+    .workbench-stat.danger b { color:var(--danger); }
+    .workbench-stat.warning b { color:#d97706; }
+    .task-tabs { display:flex; gap:8px; overflow:auto; padding:2px 1px 10px; scrollbar-width:none; }
+    .task-tabs::-webkit-scrollbar { display:none; }
+    .task-tab { border:1px solid var(--line); background:#fff; color:var(--sub-text); border-radius:999px; height:31px; padding:0 12px; white-space:nowrap; cursor:pointer; font-size:12px; }
+    .task-tab:hover, .task-tab.active { border-color:#b8ccff; color:var(--primary); background:var(--blue-bg); }
+    .task-list { display:grid; gap:10px; }
+    .task-student { background:#fff; border:1px solid var(--line); border-radius:12px; padding:14px; cursor:pointer; transition:.16s ease; box-shadow:0 4px 14px rgba(16,24,40,.035); }
+    .task-student:hover, .task-student.selected { border-color:#9dbbff; box-shadow:0 7px 20px rgba(22,119,255,.1); }
+    .task-student.selected { background:#fbfdff; }
+    .task-student-top { display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
+    .task-student-id { display:flex; gap:10px; align-items:center; min-width:0; }
+    .task-student-id .student-avatar { width:38px; height:38px; }
+    .task-student-id b { display:block; font-size:15px; }
+    .task-student-id .sub { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .task-count { color:var(--primary); background:var(--blue-bg); border-radius:999px; padding:4px 8px; font-size:12px; font-weight:700; white-space:nowrap; }
+    .task-primary { margin:12px 0 10px; padding:10px 11px; border-radius:9px; background:#f8fafc; border-left:3px solid var(--primary); }
+    .task-primary.overdue { background:var(--red-bg); border-left-color:var(--danger); }
+    .task-primary-title { display:flex; align-items:center; gap:7px; flex-wrap:wrap; font-weight:700; }
+    .task-primary-title .due { color:var(--sub-text); font-size:12px; font-weight:500; }
+    .task-primary.overdue .due { color:var(--danger); font-weight:700; }
+    .task-evidence { color:var(--sub-text); font-size:12px; line-height:1.5; margin-top:5px; }
+    .task-student-foot { display:flex; align-items:center; justify-content:space-between; gap:10px; color:var(--muted); font-size:12px; }
+    .task-student-foot .quick-metrics { display:flex; gap:10px; flex-wrap:wrap; }
+    .task-student-actions { display:flex; gap:6px; }
+    .context-card { background:#fff; border:1px solid var(--line); border-radius:12px; overflow:hidden; box-shadow:0 6px 22px rgba(16,24,40,.06); }
+    .context-head { padding:18px; background:linear-gradient(135deg,#f6f9ff 0%,#fff 72%); border-bottom:1px solid var(--line); }
+    .context-identity { display:flex; align-items:center; gap:11px; }
+    .context-identity .student-avatar { width:44px; height:44px; font-size:16px; }
+    .context-identity b { font-size:18px; }
+    .context-identity .sub { margin-top:4px; }
+    .context-body { padding:16px; }
+    .context-section { padding-bottom:16px; margin-bottom:16px; border-bottom:1px solid var(--line); }
+    .context-section:last-child { padding-bottom:0; margin-bottom:0; border-bottom:0; }
+    .context-section-title { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px; font-size:13px; font-weight:700; }
+    .context-task { border:1px solid #c7d7fe; background:#f7faff; border-radius:10px; padding:12px; }
+    .context-task.overdue { border-color:#fecaca; background:#fff7f7; }
+    .context-task-title { display:flex; align-items:center; gap:7px; flex-wrap:wrap; font-weight:700; }
+    .guide-list { list-style:none; padding:0; margin:0; display:grid; gap:8px; }
+    .guide-list li { display:flex; gap:8px; color:var(--sub-text); line-height:1.5; font-size:13px; }
+    .guide-list li::before { content:counter(item); counter-increment:item; width:20px; height:20px; flex:0 0 20px; display:grid; place-items:center; color:var(--primary); background:var(--blue-bg); border-radius:50%; font-size:11px; font-weight:700; }
+    .guide-list { counter-reset:item; }
+    .context-metrics { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; }
+    .context-metric { background:#f7f8fa; border-radius:8px; padding:10px; }
+    .context-metric span { display:block; color:var(--muted); font-size:11px; margin-bottom:4px; }
+    .context-metric b { font-size:14px; }
+    .context-notes { list-style:none; padding:0; margin:0; display:grid; gap:9px; }
+    .context-notes li { color:var(--sub-text); font-size:12px; line-height:1.5; padding-left:10px; border-left:2px solid #d7e7ff; }
+    .context-notes b { color:var(--text); }
+    .empty-context { padding:48px 20px; text-align:center; color:var(--muted); }
+
     @media (max-width: 1180px) {
-      .stats, .metric-row { grid-template-columns: repeat(2, 1fr); }
+      .workbench { grid-template-columns: 1fr; }
+      .workbench-side { position:static; }
+      .workbench-stats { grid-template-columns: repeat(2, 1fr); }
       .filters { grid-template-columns: 1fr 1fr; }
       .two-col { grid-template-columns: 1fr; }
       .drawer { width: 820px; }
@@ -279,6 +343,8 @@
       currentView: 'dashboard',
       filter: { keyword: '', risk: '全部', taskType: '全部', wecom: '全部', package: '全部' },
       currentStudentId: 's1',
+      currentTaskId: 't5',
+      taskFilter: '全部',
       drawerTab: 'overview',
       students: [
         {
@@ -360,24 +426,85 @@
     }
 
     function renderDashboard() {
-      const done = state.tasks.filter(t => t.status === '已完成').length;
-      const overdue = state.tasks.filter(t => t.status === '逾期').length;
-      const high = openTasks().filter(t => t.priority === 'high').length;
-      const soon = state.students.filter(s => s.hoursLeft <= 20).length;
+      const open = openTasks();
+      const overdue = open.filter(t => t.status === '逾期').length;
+      const high = open.filter(t => t.priority === 'high').length;
+      const grouped = groupedTaskStudents();
+      const selectedTask = selectedWorkbenchTask();
+      const selectedStudent = selectedTask ? studentById(selectedTask.studentId) : null;
       $('#dashboard').innerHTML = `
-        ${pageHead('LP 工作台', '', '<button class="btn soft" onclick="openContactModal(\'s1\',\'快速记录\')">+ 快速记录 Follow</button>')}
-        <section class="stats">
-          <div class="stat-card"><div class="stat-label">今日待处理 <span class="tag orange">实时</span></div><div class="stat-num">${openTasks().length}</div></div>
-          <div class="stat-card"><div class="stat-label">高优任务</div><div class="stat-num">${high}</div></div>
-          <div class="stat-card"><div class="stat-label">课包≤20课时</div><div class="stat-num">${soon}</div></div>
-          <div class="stat-card"><div class="stat-label">今日已完成</div><div class="stat-num">${done}</div></div>
+        <div class="workbench-head"><div><h1>LP 工作台</h1><div class="workbench-date">今天需要处理的学生与服务任务</div></div><div class="toolbar"><button class="btn soft" onclick="openContactModal('${selectedStudent?.id || 's1'}','快速记录')">+ 快速记录 Follow</button></div></div>
+        <section class="workbench-stats">
+          <div class="workbench-stat"><span>待处理学生</span><b>${grouped.length}</b></div>
+          <div class="workbench-stat danger"><span>已逾期任务</span><b>${overdue}</b></div>
+          <div class="workbench-stat warning"><span>高优先级任务</span><b>${high}</b></div>
+          <div class="workbench-stat"><span>今日待处理</span><b>${open.length}</b></div>
         </section>
-        <div class="two-col">
-          <section class="card"><div class="card-hd"><div><div class="card-title">今日跟进队列</div></div><select onchange="filterTaskType(this.value)"><option>全部</option><option>课包到期提醒</option><option>补差节点</option><option>首课</option><option>复课提醒</option><option>问题课程</option></select></div><div class="card-bd"><div class="queue">${taskQueueHtml()}</div></div></section>
-          <section class="card"><div class="card-hd"><div class="card-title">重点学生概览</div><button class="btn text" onclick="switchView('students')">查看全部</button></div><div class="card-bd"><div class="three-col">${state.students.slice(0,3).map(studentMiniHtml).join('')}</div></div></section>
-        </div>
-      `;
+        <div class="workbench">
+          <section class="workbench-main">
+            <div class="task-tabs">${['全部','已逾期','今日到期','首通','首课','问题课程','补差节点','课包到期提醒'].map((tab,i) => `<button class="task-tab ${state.taskFilter===tab?'active':''}" onclick="filterWorkbench('${tab}')">${tab}${taskFilterCount(tab) ? ` · ${taskFilterCount(tab)}` : ''}</button>`).join('')}</div>
+            <div class="task-list">${grouped.length ? grouped.map(workbenchStudentHtml).join('') : '<div class="empty-tip">当前筛选下暂无待处理学生</div>'}</div>
+          </section>
+          <aside class="workbench-side">${selectedStudent && selectedTask ? workbenchContextHtml(selectedStudent, selectedTask) : '<div class="context-card"><div class="empty-context">请选择一名学生查看当前任务</div></div>'}</aside>
+        </div>`;
     }
+
+    function taskFilterMatch(t) {
+      if (state.taskFilter === '全部') return true;
+      if (state.taskFilter === '已逾期') return t.status === '逾期';
+      if (state.taskFilter === '今日到期') return t.due.includes('今日') || t.due.includes('18:00');
+      return t.type === state.taskFilter;
+    }
+
+    function taskFilterCount(tab) { return openTasks().filter(t => tab === '全部' || (tab === '已逾期' ? t.status === '逾期' : tab === '今日到期' ? (t.due.includes('今日') || t.due.includes('18:00')) : t.type === tab)).length; }
+
+    function groupedTaskStudents() {
+      const map = new Map();
+      openTasks().filter(taskFilterMatch).forEach(t => {
+        if (!map.has(t.studentId)) map.set(t.studentId, []);
+        map.get(t.studentId).push(t);
+      });
+      return [...map.entries()].map(([studentId,tasks]) => ({ student: studentById(studentId), tasks: tasks.sort(taskCompare) })).sort((a,b) => taskCompare(a.tasks[0], b.tasks[0]));
+    }
+
+    function taskCompare(a,b) {
+      const statusScore = t => t.status === '逾期' ? 0 : t.priority === 'high' ? 1 : t.priority === 'mid' ? 2 : 3;
+      return statusScore(a) - statusScore(b) || String(a.due).localeCompare(String(b.due));
+    }
+
+    function selectedWorkbenchTask() {
+      const available = openTasks().filter(taskFilterMatch);
+      return available.find(t => t.id === state.currentTaskId) || available[0];
+    }
+
+    function workbenchStudentHtml(group) {
+      const s = group.student;
+      const primary = group.tasks[0];
+      const selected = group.tasks.some(t => t.id === state.currentTaskId);
+      const overdue = primary.status === '逾期';
+      const pct = Math.round((s.hoursTotal - s.hoursLeft) / s.hoursTotal * 100);
+      return `<article class="task-student ${selected?'selected':''}" onclick="selectWorkbenchStudent('${s.id}','${primary.id}')">
+        <div class="task-student-top"><div class="task-student-id"><div class="student-avatar">${s.en[0]}</div><div><b>${s.name}</b><div class="sub">${s.sid} · ${s.parent} · ${s.wecom}</div></div></div><span class="task-count">${group.tasks.length} 项待处理</span></div>
+        <div class="task-primary ${overdue?'overdue':''}"><div class="task-primary-title"><span class="tag ${overdue?'red':'blue'}">${primary.type}</span><span class="due">${primary.status === '逾期' ? '已逾期' : primary.due + ' 前完成'}</span></div><div class="task-evidence">${primary.evidence}</div></div>
+        <div class="task-student-foot"><div class="quick-metrics"><span>课程进度 ${pct}%</span><span>剩余 ${s.hoursLeft} 课时</span><span>待上课 ${s.courses.filter(c=>c.status==='已约课'||c.status==='待上课').length} 次</span></div><div class="task-student-actions"><button class="btn text" onclick="event.stopPropagation();openDrawer('${s.id}')">完整档案</button><button class="btn primary" onclick="event.stopPropagation();openContactModal('${s.id}','${primary.type}')">联系家长</button></div></div>
+      </article>`;
+    }
+
+    function workbenchContextHtml(s, task) {
+      const overdue = task.status === '逾期';
+      const pct = Math.round((s.hoursTotal - s.hoursLeft) / s.hoursTotal * 100);
+      const guides = {
+        '首通':['确认家长已了解 LP 身份与服务范围','了解学生当前学习目标，确认联系方式与企微状态','确认首课安排，并记录家长反馈'],
+        '首课':['查看首课上课状态与课堂反馈','联系家长了解课程体验、老师匹配和学习感受','确认后续课频与约课安排，记录 Follow'],
+        '问题课程':['查看课程异常原因与学生/老师状态','联系家长完成安抚，说明处理方案','完成重新约课或记录升级结果'],
+        '补差节点':['查看当前课包与补差资格','向家长说明补差方案与有效期','记录家长意向，支付成功后由系统自动完成'],
+        '课包到期提醒':['查看剩余课时与课包有效期','提醒家长合理消耗课时或了解续费计划','记录沟通结果与下次跟进时间']
+      }[task.type] || ['查看任务触发依据与相关学生信息','联系家长完成当前服务动作','记录 Follow，等待系统判定任务结果'];
+      return `<div class="context-card"><div class="context-head"><div class="context-identity"><div class="student-avatar">${s.en[0]}</div><div><b>${s.name}</b><div class="sub">${s.sid} · 家长 ${s.parent} · CC ${s.cc || '待分配'}</div></div></div><div style="margin-top:10px"><span class="tag ${riskTag(s.risk)}">${s.risk}</span><span class="tag ${s.wecom==='已绑定'?'green':'orange'}">企微${s.wecom}</span></div></div><div class="context-body"><section class="context-section"><div class="context-section-title"><span>当前任务</span><span class="tag ${overdue?'red':'blue'}">${task.status}</span></div><div class="context-task ${overdue?'overdue':''}"><div class="context-task-title"><span>${task.type}</span><span class="muted">${overdue?'已逾期':task.due+' 前完成'}</span></div><div class="sub" style="margin-top:7px">触发依据：${task.evidence}</div><div class="sub">完成规则：${task.completion || '系统检测到有效处理结果后自动更新状态'}</div></div></section><section class="context-section"><div class="context-section-title"><span>操作指南</span><span class="muted">建议步骤</span></div><ol class="guide-list">${guides.map(g=>`<li>${g}</li>`).join('')}</ol><div class="toolbar" style="margin-top:12px"><button class="btn primary" onclick="openContactModal('${s.id}','${task.type}')">联系家长并记录</button><button class="btn" onclick="openScheduleModal('${s.id}')">帮学生约课</button></div></section><section class="context-section"><div class="context-section-title"><span>学生摘要</span><button class="btn text" onclick="openDrawer('${s.id}')">查看完整档案</button></div><div class="context-metrics"><div class="context-metric"><span>课程进度</span><b>${pct}%</b></div><div class="context-metric"><span>剩余课时</span><b>${s.hoursLeft} 节</b></div><div class="context-metric"><span>最近上课</span><b>${s.courses[0]?.time?.slice(5,10) || '暂无'}</b></div><div class="context-metric"><span>已约待上课</span><b>${s.courses.filter(c=>c.status==='已约课'||c.status==='待上课').length} 次</b></div><div class="context-metric"><span>支付时间</span><b>${s.order.latest.slice(0,10)}</b></div><div class="context-metric"><span>CC 老师</span><b>${s.cc || '待分配'}</b></div></div></section><section class="context-section"><div class="context-section-title"><span>最近 Follow</span><button class="btn text" onclick="openContactModal('${s.id}','新增 Follow')">+ 新增</button></div><ul class="context-notes">${s.notes.slice(0,3).map(n=>`<li><b>${n.time} · ${n.title}</b><br>${n.text}</li>`).join('')}</ul></section></div></div>`;
+    }
+
+    function selectWorkbenchStudent(studentId, taskId) { state.currentStudentId = studentId; state.currentTaskId = taskId; renderDashboard(); }
+    function filterWorkbench(tab) { state.taskFilter = tab; const first = openTasks().filter(taskFilterMatch)[0]; if (first) state.currentTaskId = first.id; renderDashboard(); }
 
     function taskQueueHtml() {
       const list = state.tasks.filter(t => t.status !== '已完成' && (state.filter.taskType === '全部' || t.type === state.filter.taskType));
