@@ -271,6 +271,27 @@
     .context-notes b { color:var(--text); }
     .empty-context { padding:48px 20px; text-align:center; color:var(--muted); }
 
+
+    .section-grid { display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; }
+    .info-section { background:#fff; border:1px solid var(--line); border-radius:10px; overflow:hidden; margin-bottom:14px; }
+    .info-section-hd { min-height:44px; padding:12px 14px; border-bottom:1px solid var(--line); display:flex; align-items:center; justify-content:space-between; gap:10px; }
+    .info-section-title { font-weight:700; font-size:14px; }
+    .info-section-bd { padding:13px 14px; }
+    .kv-grid { display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:10px 14px; }
+    .kv { min-width:0; }
+    .kv span { display:block; color:var(--muted); font-size:12px; margin-bottom:4px; }
+    .kv b { display:block; color:var(--text); font-size:14px; line-height:1.45; overflow-wrap:anywhere; }
+    .kv.full { grid-column:1/-1; }
+    .compact-list { list-style:none; padding:0; margin:0; display:grid; gap:9px; }
+    .compact-list li { padding:9px 10px; background:#f7f8fa; border-radius:7px; color:var(--sub-text); line-height:1.5; }
+    .compact-list b { color:var(--text); }
+    .action-grid { display:grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap:8px; }
+    .action-tile { border:1px solid var(--line); border-radius:8px; padding:10px; background:#fff; cursor:pointer; text-align:left; }
+    .action-tile:hover { border-color:#91c9bf; background:#fbfefd; }
+    .action-tile b { display:block; margin-bottom:4px; }
+    .action-tile span { color:var(--muted); font-size:12px; line-height:1.45; }
+    .bill-table td, .bill-table th { padding:9px 10px; }
+
     @media (max-width: 1180px) {
       .workbench { grid-template-columns: minmax(0, 1fr) minmax(320px, .78fr); gap:12px; }
       .workbench-stats { grid-template-columns: repeat(2, 1fr); }
@@ -304,6 +325,7 @@
       .task-student-actions { width:100%; }
       .task-student-actions .btn { flex:1; }
       .context-metrics { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .section-grid, .kv-grid, .action-grid { grid-template-columns:1fr; }
     }
   </style>
 </head>
@@ -363,13 +385,19 @@
           reward: { poster: '本周未分享', qinxue: 9, target: 12, gift: '差 3 节达标', campaign: '9月勤学奖活动' },
           order: { latest: '2026-06-18｜144课包｜¥16,800', intention: '续费待沟通', buCha: '补差期已结束' },
           notes: [
-            { time:'09-22 19:20', title:'电话沟通', text:'家长反馈近期学校作业多，本周暂未约课，约定周四再确认时间。' },
-            { time:'09-18 14:05', title:'企微提醒', text:'提醒完成课后作业，家长已读未回复。' }
+            { time:'09-22 19:20', title:'电话沟通', type:'课频跟进', channel:'电话', operator:'王老师', status:'沟通完成', source:'LP手动记录', text:'家长反馈近期学校作业多，本周暂未约课，约定周四再确认时间。' },
+            { time:'09-18 14:05', title:'企微提醒', type:'作业提醒', channel:'企微', operator:'王老师', status:'已读未回复', source:'LP手动记录', text:'提醒完成课后作业，家长已读未回复。' },
+            { time:'09-16 18:42', title:'自动外呼回访', type:'外呼识别 Follow', channel:'电话外呼', operator:'外呼识别服务', status:'接通｜已识别家长反馈', source:'系统自动生成', text:'识别摘要：家长表示本周学校作业较多，周四晚可安排上课；系统已生成 Follow 并关联 SID。' }
           ],
           courses: [
             { title:'自然拼读 L4-U6', lessonNo:'第 6 课 / 共 12 课', time:'2026-09-20 19:30', status:'已上课', teacher:'Amy', preClass:{status:'已完成',name:'L4-U6 课前预习'}, postClass:{status:'未完成',name:'单词跟读练习'}, feedback:'能独立拼读本课重点词汇，个别长元音还需要巩固。', exception:'课后作业逾期未完成，建议联系家长确认完成计划。' },
             { title:'口语主题课-Travel', lessonNo:'待安排', time:'待约课', status:'未约课', teacher:'待分配', preClass:{status:'-',name:'待课程安排'}, postClass:{status:'-',name:'待课程安排'}, feedback:'', exception:'' }
           ],
+          profile:{ cnName:'王一辰', gender:'男', age:'8岁2个月', grade:'二年级', school:'上海市徐汇区实验小学', city:'上海', timezone:'北京时间', birthday:'2018-07-12', level:'L4', goal:'保持每周2-3节课频，提升自然拼读和口语表达', register:'2026-05-28', channel:'高琦P / TL000xz', cc:'王老师', lp:'王老师', pid:'PID400331' },
+          payment:{ first:'2026-06-18 14:26', latest:'2026-06-18 14:26', method:'微信支付', paid:'¥16,800', source:'LP转化', status:'已支付' },
+          leave:{ status:'无请假/休学', latest:'-', resume:'-' },
+          hourBills:[{time:'2026-09-20', type:'正式课消耗', change:'-1', remain:'18', source:'自然拼读 L4-U6'}, {time:'2026-06-18', type:'购买入账', change:'+144', remain:'144', source:'CABC 144课包'}],
+          reports:[{name:'L4-U6 课堂报告', time:'2026-09-20', summary:'长元音掌握一般，建议补充跟读练习。'}, {name:'月度学情报告', time:'2026-09-01', summary:'课频下降，作业完成率低于目标。'}],
           nodes: [
             { name:'首通', status:'已完成', due:'已完成', desc:'已加微并确认首课安排' },
             { name:'问题课程', status:'待处理', due:'今日 18:00', desc:'9/20 课后作业未完成且家长未反馈' },
@@ -384,6 +412,11 @@
           order: { latest:'2026-09-19｜96课包｜¥12,800', intention:'首课后观察', buCha:'补差期内，可推荐专项包' },
           notes:[{time:'09-23 10:32', title:'首次联系', text:'家长同意加企微，但尚未完成绑定。'}],
           courses:[{title:'首课体验-Reading', lessonNo:'第 1 课 / 共 8 课', time:'2026-09-25 20:00', status:'已约课', teacher:'Eva', preClass:{status:'已完成',name:'Reading 课前预习'}, postClass:{status:'-',name:'课程完成后生成'}, feedback:'', exception:''}],
+          profile:{ cnName:'李露娜', gender:'女', age:'6岁8个月', grade:'一年级', school:'待补充', city:'北京', timezone:'北京时间', birthday:'2019-01-20', level:'L1', goal:'完成首课适应，建立固定课频', register:'2026-09-19', channel:'APP-华为-官方 / TS000LM', cc:'赵老师', lp:'王老师', pid:'PID400482' },
+          payment:{ first:'2026-09-19 09:10', latest:'2026-09-19 09:10', method:'支付宝', paid:'¥12,800', source:'CC转介绍', status:'已支付' },
+          leave:{ status:'无请假/休学', latest:'-', resume:'-' },
+          hourBills:[{time:'2026-09-19', type:'购买入账', change:'+96', remain:'96', source:'CABC 96课包'}, {time:'2026-09-25', type:'预约占用', change:'-1', remain:'92', source:'首课体验-Reading'}],
+          reports:[{name:'首课准备报告', time:'2026-09-24', summary:'课前预习已完成，待首课后生成正式课堂报告。'}],
           nodes:[{name:'首通', status:'已完成', due:'已完成', desc:'已完成首次联系'}, {name:'首课', status:'待处理', due:'09-25 21:00', desc:'首课后需回访家长'}, {name:'加微/企微绑定', status:'待处理', due:'今日', desc:'家长尚未完成企微绑定'}]
         },
         {
@@ -394,6 +427,11 @@
           order:{ latest:'2026-08-02｜48课包｜¥6,800', intention:'补差高意向', buCha:'补差期内，建议本周跟进' },
           notes:[{time:'09-21 20:05', title:'企微沟通', text:'家长认可老师，询问补差课包优惠和赠课。'}],
           courses:[{title:'自然拼读 L2-U8', lessonNo:'第 8 课 / 共 16 课', time:'2026-09-24 19:30', status:'待上课', teacher:'Bob', preClass:{status:'未完成',name:'L2-U8 课前预习'}, postClass:{status:'-',name:'课程完成后生成'}, feedback:'', exception:'课前预习未完成，请课前提醒家长协助准备。'}, {title:'自然拼读 L2-U9', lessonNo:'第 9 课 / 共 16 课', time:'2026-09-27 19:30', status:'已约课', teacher:'Bob', preClass:{status:'待完成',name:'L2-U9 课前预习'}, postClass:{status:'-',name:'课程完成后生成'}, feedback:'', exception:''}],
+          profile:{ cnName:'张凯文', gender:'男', age:'7岁6个月', grade:'二年级', school:'杭州育才小学', city:'杭州', timezone:'北京时间', birthday:'2019-03-02', level:'L2', goal:'维持稳定课频，推动补差升级课包', register:'2026-08-02', channel:'转介绍 / REF2026', cc:'刘老师', lp:'王老师', pid:'PID400517' },
+          payment:{ first:'2026-08-02 11:42', latest:'2026-08-02 11:42', method:'银行卡', paid:'¥6,800', source:'转介绍成单', status:'已支付' },
+          leave:{ status:'无请假/休学', latest:'-', resume:'-' },
+          hourBills:[{time:'2026-09-24', type:'预约占用', change:'-1', remain:'9', source:'自然拼读 L2-U8'}, {time:'2026-08-02', type:'购买入账', change:'+48', remain:'48', source:'首次报名 48课包'}],
+          reports:[{name:'L2-U7 单元报告', time:'2026-09-18', summary:'课堂参与积极，词汇复现需要家长配合练习。'}],
           nodes:[{name:'补差节点', status:'待处理', due:'今日', desc:'补差期内且家长有咨询'}, {name:'月度回访', status:'进行中', due:'09-28', desc:'本月课消接近勤学奖达标'}]
         },
         {
@@ -404,6 +442,11 @@
           order:{ latest:'2026-07-21｜288课包｜¥29,800', intention:'长期服务', buCha:'不适用' },
           notes:[{time:'09-17 11:10', title:'请假处理', text:'家长出行请假，提醒返程后恢复约课。'}],
           courses:[{title:'绘本精读 L3-U3', lessonNo:'第 3 课 / 共 10 课', time:'2026-09-17 20:00', status:'已请假', teacher:'Cindy', preClass:{status:'-',name:'请假课程不适用'}, postClass:{status:'-',name:'请假课程不适用'}, feedback:'', exception:'家长已提交请假，本节课不计为已上课。'}],
+          profile:{ cnName:'陈米娅', gender:'女', age:'9岁1个月', grade:'三年级', school:'广州天河外国语学校', city:'广州', timezone:'北京时间', birthday:'2017-08-30', level:'L3', goal:'请假后恢复课频，保持阅读输入', register:'2026-07-21', channel:'暑期活动 / SUMMER26', cc:'陈老师', lp:'王老师', pid:'PID400588' },
+          payment:{ first:'2026-07-21 16:08', latest:'2026-07-21 16:08', method:'微信支付', paid:'¥29,800', source:'活动成单', status:'已支付' },
+          leave:{ status:'请假后待复课', latest:'2026-09-17 至 2026-09-23', resume:'待确认复课时间' },
+          hourBills:[{time:'2026-09-17', type:'请假返还', change:'0', remain:'196', source:'绘本精读 L3-U3'}, {time:'2026-07-21', type:'购买入账', change:'+288', remain:'288', source:'CABC 288课包'}],
+          reports:[{name:'请假前月度报告', time:'2026-09-01', summary:'阅读理解稳定，但请假后课频明显下降。'}],
           nodes:[{name:'月度回访', status:'待处理', due:'明日', desc:'请假后尚未恢复正常课频'}, {name:'复课提醒', status:'待处理', due:'今日', desc:'请假后 7 天未约课'}]
         }
       ],
@@ -572,7 +615,7 @@
     }
     function nodeRowHtml(s,n) {
       const color = n.status === '已完成' ? 'green' : n.status === '进行中' ? 'blue' : 'orange';
-      return `<tr><td>${s.name}<div class="sub">${s.parent}</div></td><td>${n.name}</td><td><span class="tag ${color}">${n.status}</span></td><td>${n.due}</td><td>${n.desc}</td><td><button class="btn text" onclick="openDrawer('${s.id}','nodes')">看档案</button><button class="btn text" onclick="completeNode('${s.id}','${n.name}')">完成/记录</button></td></tr>`;
+      return `<tr><td>${s.name}<div class="sub">${s.parent}</div></td><td>${n.name}</td><td><span class="tag ${color}">${n.status}</span></td><td>${n.due}</td><td>${n.desc}</td><td><button class="btn text" onclick="openDrawer('${s.id}','nodes')">看档案</button></td></tr>`;
     }
 
     function renderRewards() {
@@ -608,9 +651,9 @@
 
     function renderDrawer() {
       const s = studentById(state.currentStudentId);
-      $('#studentDrawer').innerHTML = `<div class="drawer-hd"><div><div class="drawer-title">${s.name}｜学生服务档案</div><div class="sub">${s.sid}｜家长 ${s.parent} ${s.phone}｜${s.package}</div></div><button class="close" onclick="closeDrawer()">×</button></div><div class="drawer-bd"><div class="drawer-tabs">${['overview','study','records','nodes','rewards','orders'].map(tab => `<div class="drawer-tab ${state.drawerTab===tab?'active':''}" onclick="switchDrawerTab('${tab}')">${drawerTabName(tab)}</div>`).join('')}</div>${drawerPaneHtml(s)}</div><div class="drawer-ft"><button class="btn" onclick="openScheduleModal('${s.id}')">帮学生约课</button><button class="btn warn" onclick="openIntentModal('${s.id}')">记录补差/续费意向</button><button class="btn primary" onclick="openContactModal('${s.id}','档案跟进')">联系并记录</button></div>`;
+      $('#studentDrawer').innerHTML = `<div class="drawer-hd"><div><div class="drawer-title">${s.name}｜SID 学生详情页</div><div class="sub">${s.sid}｜PID ${s.profile?.pid || '-'}｜家长 ${s.parent} ${s.phone}｜${s.package}</div></div><button class="close" onclick="closeDrawer()">×</button></div><div class="drawer-bd"><div class="drawer-tabs">${['overview','study','records','nodes','rewards','orders','parent'].map(tab => `<div class="drawer-tab ${state.drawerTab===tab?'active':''}" onclick="switchDrawerTab('${tab}')">${drawerTabName(tab)}</div>`).join('')}</div>${drawerPaneHtml(s)}</div><div class="drawer-ft"><button class="btn" onclick="openScheduleModal('${s.id}')">帮学生约课</button><button class="btn warn" onclick="openIntentModal('${s.id}')">记录补差/续费意向</button><button class="btn primary" onclick="openContactModal('${s.id}','档案跟进')">联系并记录</button></div>`;
     }
-    function drawerTabName(tab) { return {overview:'服务概览',study:'课程与学情',records:'联系记录',nodes:'服务节点',rewards:'活动奖励',orders:'订单课包'}[tab]; }
+    function drawerTabName(tab) { return {overview:'学生概览',study:'课程学情',records:'Follow记录',nodes:'服务节点',rewards:'勤学奖/活动',orders:'订单课时',parent:'家长/PID'}[tab]; }
     function switchDrawerTab(tab) { state.drawerTab = tab; renderDrawer(); }
     function homeworkStatusHtml(item) {
       if (!item || item.status === '-') return `<div class="homework-state"><span class="homework-mark na">—</span><span>${item?.name || '未安排'}</span></div>`;
@@ -636,13 +679,66 @@
           : '';
       return `<article class="course-detail-card"><div class="course-detail-head"><div><div class="course-detail-title">${c.title}</div><div class="sub">${c.lessonNo || '课次待确认'}</div></div><span class="tag ${statusClass}">${c.status}</span></div><div class="course-detail-body"><div class="course-meta"><div class="course-meta-item"><span>上课时间</span><b>${c.time}</b></div><div class="course-meta-item"><span>授课老师</span><b>${c.teacher}</b></div></div><div class="course-homework-grid"><div class="course-homework"><div class="course-homework-label">课前作业</div>${homeworkStatusHtml(c.preClass)}</div><div class="course-homework"><div class="course-homework-label">课后作业</div>${homeworkStatusHtml(c.postClass)}</div></div>${feedback}${exception}${actions ? `<div class="course-detail-actions">${actions}</div>` : ''}</div></article>`;
     }
+    function kv(label, value, extra='') { return `<div class="kv ${extra}"><span>${label}</span><b>${value || '-'}</b></div>`; }
+    function section(title, body, right='') { return `<section class="info-section"><div class="info-section-hd"><div class="info-section-title">${title}</div>${right}</div><div class="info-section-bd">${body}</div></section>`; }
+    function currentProgress(s) { return Math.round((s.hoursTotal - s.hoursLeft) / s.hoursTotal * 100); }
+    function scheduleStats(s) {
+      return { booked: s.courses.filter(c=>c.status==='已约课'||c.status==='待上课').length, last: s.courses.find(c=>c.status==='已上课')?.time || '暂无', next: s.courses.find(c=>c.status==='已约课'||c.status==='待上课')?.time || '暂无' };
+    }
+    function followRecordHtml(n) {
+      const source = n.source || (n.type === '自动外呼' ? '系统自动生成' : 'LP手动记录');
+      const channel = n.channel || (n.title.includes('企微') ? '企微' : n.title.includes('电话') ? '电话' : '未标注');
+      const operator = n.operator || (source.includes('系统') ? '系统' : '王老师');
+      const status = n.status || '沟通完成';
+      return `<li><b>${n.time}｜${n.type || n.title}</b> <span class="tag ${source.includes('系统')?'purple':'gray'}">${source}</span><div class="sub">${operator} · ${channel} · ${status}</div><div>${n.text}</div></li>`;
+    }
+    function parentDetails(s) {
+      const p=s.profile || {};
+      const suffix=String(p.pid || '400000').slice(-3);
+      return { contact:s.phone, email:`parent${suffix}@example.com`, status:'NORMAL', registered:p.register || '-', lastLogin:s.notes?.[0]?.time || '-', wechat:s.wecom==='已绑定'?'Mary-'+suffix:'--', registerSource:'APP', invite:`HX${suffix}8KQ`, referrer:'自然注册', tags:'在读学员家长 · '+s.status, registerSource:'APP' };
+    }
     function drawerPaneHtml(s) {
-      if (state.drawerTab === 'overview') return `<div class="drawer-pane active"><div class="detail-grid"><div class="detail"><span>课包剩余</span><b>${s.hoursLeft}/${s.hoursTotal} 课时</b></div><div class="detail"><span>下一个节点</span><b>${s.nextNode}</b></div><div class="detail"><span>企微绑定</span><b>${s.wecom}</b></div><div class="detail"><span>作业完成率</span><b>${s.study.homework}%</b></div><div class="detail"><span>本月上课</span><b>${s.reward.qinxue}/${s.reward.target} 节</b></div><div class="detail"><span>经营状态</span><b>${s.order.intention}</b></div></div><section class="card"><div class="card-hd"><div class="card-title">当前待办</div></div><div class="card-bd"><div class="queue">${state.tasks.filter(t=>t.studentId===s.id && t.status!=='已完成').map(t=>`<div class="queue-item"><div><span class="priority ${priorityClass(t.priority)}">${priorityText(t.priority)}</span></div><div><b>${t.type}</b><div class="queue-evidence">${t.evidence}<br>${t.action}</div></div><button class="btn primary" onclick="openContactModal('${s.id}','${t.type}')">处理</button></div>`).join('') || '<div class="empty-tip">暂无未完成待办</div>'}</div></div></section></div>`;
-      if (state.drawerTab === 'study') return `<div class="drawer-pane active"><div class="detail-grid"><div class="detail"><span>到课节数</span><b>${s.study.attendance}</b></div><div class="detail"><span>课前预习完成率</span><b>${s.study.preview}%</b></div><div class="detail"><span>连续覆盖天数</span><b>${s.study.days} 天</b></div></div><section class="card"><div class="card-hd"><div><div class="card-title">课程记录</div></div><span class="tag blue">${s.courses.length} 条课程</span></div><div class="card-bd"><div class="course-list">${s.courses.map((c,i)=>courseDetailCardHtml(s,c,i)).join('')}</div></div></section></div>`;
-      if (state.drawerTab === 'records') return `<div class="drawer-pane active"><section class="card"><div class="card-hd"><div class="card-title">家长联系时间线</div><button class="btn primary" onclick="openContactModal('${s.id}','新增联系')">+ 新增记录</button></div><div class="card-bd"><ul class="timeline">${s.notes.map(n=>`<li><b>${n.time}｜${n.title}</b><br>${n.text}</li>`).join('')}</ul></div></section></div>`;
-      if (state.drawerTab === 'nodes') return `<div class="drawer-pane active"><section class="card"><div class="card-hd"><div class="card-title">服务节点</div></div><table><thead><tr><th>节点</th><th>状态</th><th>截止</th><th>说明</th><th>操作</th></tr></thead><tbody>${s.nodes.map(n=>nodeRowHtml(s,n)).join('')}</tbody></table></section></div>`;
-      if (state.drawerTab === 'rewards') return `<div class="drawer-pane active"><div class="detail-grid"><div class="detail"><span>海报任务</span><b>${s.reward.poster}</b></div><div class="detail"><span>勤学奖进度</span><b>${s.reward.qinxue}/${s.reward.target}</b></div><div class="detail"><span>当前判断</span><b>${s.reward.gift}</b></div></div></div>`;
-      return `<div class="drawer-pane active"><section class="card"><div class="card-hd"><div class="card-title">订单与课包</div></div><div class="card-bd"><div class="detail-grid"><div class="detail"><span>最新订单</span><b>${s.order.latest}</b></div><div class="detail"><span>补差状态</span><b>${s.order.buCha}</b></div><div class="detail"><span>经营意向</span><b>${s.order.intention}</b></div></div></div></section></div>`;
+      const pct = currentProgress(s);
+      const st = scheduleStats(s);
+      const p = s.profile || {};
+      const pay = s.payment || {};
+      if (state.drawerTab === 'overview') return `<div class="drawer-pane active">
+        <div class="detail-grid"><div class="detail"><span>课程进度</span><b>${pct}%</b></div><div class="detail"><span>剩余课时</span><b>${s.hoursLeft}/${s.hoursTotal} 课时</b></div><div class="detail"><span>已约待上课</span><b>${st.booked} 次</b></div><div class="detail"><span>最近一次上课</span><b>${st.last}</b></div><div class="detail"><span>支付时间</span><b>${pay.latest || s.order.latest.slice(0,10)}</b></div><div class="detail"><span>CC 老师</span><b>${p.cc || s.cc || '待分配'}</b></div></div>
+        <div class="section-grid">
+          ${section('学生基本信息', `<div class="kv-grid">${kv('SID',s.sid)}${kv('中文名',p.cnName)}${kv('英文名',s.en)}${kv('性别',p.gender)}${kv('年龄',p.age)}${kv('生日',p.birthday)}${kv('年级',p.grade)}${kv('学校',p.school)}${kv('城市/时区',`${p.city || '-'} / ${p.timezone || '-'}`)}${kv('当前级别',p.level)}${kv('学生状态',s.status)}${kv('注册时间',p.register)}${kv('学习目标',p.goal,'full')}</div>`)}
+          ${section('课时情况', `<div class="kv-grid">${kv('当前课包',s.package)}${kv('剩余课时',`${s.hoursLeft}/${s.hoursTotal}`)}${kv('课包有效期',s.endDate)}${kv('课程进度',`${pct}%`)}${kv('课频状态',s.lessonRate)}${kv('经营判断',s.order.intention)}</div>`)}
+        </div>
+        <div class="section-grid">
+          ${section('约课情况', `<div class="kv-grid">${kv('已约待上课',`${st.booked} 次`)}${kv('下一次上课',st.next)}${kv('最近一次上课',st.last)}${kv('当前课程状态',s.courses[0]?.status)}</div>`)}
+          ${section('支付情况', `<div class="kv-grid">${kv('首次支付时间',pay.first)}${kv('最近支付时间',pay.latest)}${kv('支付金额',pay.paid)}${kv('支付方式',pay.method)}${kv('支付状态',pay.status)}${kv('成单渠道',pay.source || p.channel)}</div>`)}
+        </div>
+        ${section('常用操作', `<div class="action-grid"><button class="action-tile" onclick="openContactModal('${s.id}','详情联系')"><b>联系家长</b><span>记录外呼/企微沟通</span></button><button class="action-tile" onclick="openScheduleModal('${s.id}')"><b>帮学生约课</b><span>选择课程和老师</span></button><button class="action-tile" onclick="openIntentModal('${s.id}')"><b>记录补差/续费</b><span>更新经营意向</span></button><button class="action-tile" onclick="switchDrawerTab('nodes')"><b>查看服务节点</b><span>处理当前任务</span></button></div>`)}
+      </div>`;
+      if (state.drawerTab === 'study') return `<div class="drawer-pane active">
+        <div class="detail-grid"><div class="detail"><span>到课节数</span><b>${s.study.attendance}</b></div><div class="detail"><span>课前预习完成率</span><b>${s.study.preview}%</b></div><div class="detail"><span>课后作业完成率</span><b>${s.study.homework}%</b></div><div class="detail"><span>连续覆盖天数</span><b>${s.study.days} 天</b></div><div class="detail"><span>学习频率</span><b>${s.study.frequency}</b></div><div class="detail"><span>课程进度</span><b>${pct}%</b></div></div>
+        ${section('课程报告', `<ul class="compact-list">${(s.reports||[]).map(r=>`<li><b>${r.name}</b><br>${r.time}｜${r.summary}</li>`).join('')}</ul>`)}
+        <section class="card"><div class="card-hd"><div><div class="card-title">上课记录与课前/课后作业</div></div><span class="tag blue">${s.courses.length} 条课程</span></div><div class="card-bd"><div class="course-list">${s.courses.map((c,i)=>courseDetailCardHtml(s,c,i)).join('')}</div></div></section>
+      </div>`;
+      if (state.drawerTab === 'records') return `<div class="drawer-pane active">
+        ${section('Follow 记录', `<ul class="timeline">${s.notes.map(followRecordHtml).join('')}</ul>`, `<button class="btn primary" onclick="openContactModal('${s.id}','新增联系')">+ 新增</button>`)}
+        ${section('休学 / 请假', `<div class="kv-grid">${kv('当前状态',s.leave?.status)}${kv('最近记录',s.leave?.latest)}${kv('复课计划',s.leave?.resume)}${kv('跟进建议',s.leave?.status?.includes('待复课')?'确认复课时间并协助约课':'暂无特殊处理')}</div>`)}
+      </div>`;
+      if (state.drawerTab === 'nodes') return `<div class="drawer-pane active">${section('服务节点', `<table><thead><tr><th>节点</th><th>状态</th><th>截止</th><th>说明</th><th>操作</th></tr></thead><tbody>${s.nodes.map(n=>nodeRowHtml(s,n)).join('')}</tbody></table>`)}<div class="notice warning"><span>⏱</span><div>任务由系统根据服务节点或业务规则生成；LP 操作后由系统依据 Follow、外呼、支付或课程结果自动判断状态。</div></div></div>`;
+      if (state.drawerTab === 'rewards') return `<div class="drawer-pane active">
+        <div class="detail-grid"><div class="detail"><span>活动名称</span><b>${s.reward.campaign}</b></div><div class="detail"><span>勤学奖进度</span><b>${s.reward.qinxue}/${s.reward.target}</b></div><div class="detail"><span>海报分享</span><b>${s.reward.poster}</b></div><div class="detail"><span>当前判断</span><b>${s.reward.gift}</b></div></div>
+        ${section('勤学奖', `<div class="meter"><div class="meter-row"><span>完成进度</span><div class="bar green"><i style="width:${Math.min(100,Math.round(s.reward.qinxue/s.reward.target*100))}%"></i></div><b>${s.reward.qinxue}/${s.reward.target}</b></div></div><ul class="compact-list" style="margin-top:10px"><li><b>规则说明</b><br>活动规则按期配置，当前示例为本月目标 ${s.reward.target} 节，达标后获得赠课权益。</li><li><b>LP 动作</b><br>查看差距并联系家长催促约课、完成海报分享或转介绍任务。</li></ul>`)}
+      </div>`;
+      if (state.drawerTab === 'orders') return `<div class="drawer-pane active">
+        ${section('订单信息', `<div class="kv-grid">${kv('最新订单',s.order.latest,'full')}${kv('补差状态',s.order.buCha)}${kv('经营意向',s.order.intention)}${kv('支付时间',pay.latest)}${kv('支付金额',pay.paid)}${kv('成单渠道',pay.source || p.channel)}</div>`)}
+        ${section('课时账单', `<div class="table-wrap"><table class="bill-table"><thead><tr><th>时间</th><th>类型</th><th>变动</th><th>剩余</th><th>来源</th></tr></thead><tbody>${(s.hourBills||[]).map(b=>`<tr><td>${b.time}</td><td>${b.type}</td><td>${b.change}</td><td>${b.remain}</td><td>${b.source}</td></tr>`).join('')}</tbody></table></div>`)}
+      </div>`;
+      const parent = parentDetails(s);
+      return `<div class="drawer-pane active">
+        ${section('家长基础信息 / PID', `<div class="kv-grid">${kv('PID',p.pid)}${kv('家长姓名',s.parent)}${kv('登录手机号',s.phone)}${kv('备注联系方式',parent.contact)}${kv('登录邮箱',parent.email)}${kv('用户状态',parent.status)}${kv('注册时间',parent.registered)}${kv('上次登录时间',parent.lastLogin)}${kv('企微绑定',s.wecom)}${kv('微信昵称',parent.wechat)}${kv('注册渠道',p.channel)}${kv('注册来源',parent.registerSource)}${kv('邀请码',parent.invite)}${kv('推荐人',parent.referrer)}${kv('剩余主修课课时',`${s.hoursLeft} 节`)}${kv('家长标签',parent.tags,'full')}</div>`)}
+        ${section('家庭关联', `<ul class="compact-list"><li><b>${s.name}｜${s.sid}</b><br>当前学员 · ${s.status} · LP ${p.lp || '王老师'} · CC ${p.cc || '待分配'}</li></ul>`)}
+        ${section('家长沟通记录', `<ul class="timeline">${s.notes.map(followRecordHtml).join('')}</ul>`, `<button class="btn primary" onclick="openContactModal('${s.id}','家长沟通')">+ 新增 Follow</button>`)}
+        ${section('家长相关操作', `<div class="action-grid"><button class="action-tile" onclick="openContactModal('${s.id}','家长沟通')"><b>联系家长</b><span>电话/企微沟通</span></button><button class="action-tile" onclick="switchDrawerTab('orders')"><b>查看订单</b><span>支付与课时账单</span></button><button class="action-tile" onclick="switchDrawerTab('rewards')"><b>查看活动</b><span>勤学奖和海报</span></button><button class="action-tile" onclick="openIntentModal('${s.id}')"><b>经营意向</b><span>补差/续费跟进</span></button></div>`)}
+      </div>`;
     }
 
     function showModal(html, small=false) { $('#modal').className = 'modal' + (small ? ' small' : ''); $('#modal').innerHTML = html; $('#modalMask').classList.add('show'); }
@@ -651,7 +747,7 @@
 
     function openContactModal(studentId, source) {
       const s = studentById(studentId);
-      showModal(`<div class="modal-hd">联系家长并记录结果 <button class="close" onclick="closeModal()">×</button></div><div class="modal-bd"><div class="notice"><span>📞</span><div><b>${s.name}｜${source}</b></div></div><div class="form-grid"><div class="field"><label>联系渠道</label><select id="contactChannel"><option>电话</option><option>企微</option><option>微信</option><option>短信</option></select></div><div class="field"><label>沟通结果</label><select id="contactResult"><option>已沟通并达成下一步</option><option>家长未接通</option><option>待家长反馈</option><option>已解决问题</option></select></div><div class="field full"><label>沟通备注</label><textarea id="contactNote" placeholder="例如：已提醒本周约课；家长反馈周五可上课；已同步补差优惠信息。"></textarea><div class="error" id="contactError">请填写沟通备注，便于后续跟进</div></div><div class="field"><label>下次跟进时间</label><input id="nextTime" type="datetime-local" value="2026-09-25T19:30"></div><div class="field"><label>待办处理</label><select id="taskPolicy"><option>完成该学生相关待办</option><option>保留待办，设置下次跟进</option></select></div></div></div><div class="modal-ft"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="submitContact('${studentId}','${source}')">提交记录</button></div>`);
+      showModal(`<div class="modal-hd">联系家长并记录结果 <button class="close" onclick="closeModal()">×</button></div><div class="modal-bd"><div class="notice"><span>📞</span><div><b>${s.name}｜${source}</b></div></div><div class="form-grid"><div class="field"><label>联系渠道</label><select id="contactChannel"><option>电话</option><option>企微</option><option>微信</option><option>短信</option></select></div><div class="field"><label>沟通结果</label><select id="contactResult"><option>已沟通并达成下一步</option><option>家长未接通</option><option>待家长反馈</option><option>已解决问题</option></select></div><div class="field full"><label>沟通备注</label><textarea id="contactNote" placeholder="例如：已提醒本周约课；家长反馈周五可上课；已同步补差优惠信息。"></textarea><div class="error" id="contactError">请填写沟通备注，便于后续跟进</div></div><div class="field"><label>下次跟进时间</label><input id="nextTime" type="datetime-local" value="2026-09-25T19:30"></div><div class="field"><label>待办处理</label><select id="taskPolicy"><option>保留待办，等待系统判断</option><option>保留待办，设置下次跟进</option></select></div></div></div><div class="modal-ft"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="submitContact('${studentId}','${source}')">提交记录</button></div>`);
     }
 
     function submitContact(studentId, source) {
@@ -660,9 +756,8 @@
       const s = studentById(studentId);
       const channel = $('#contactChannel').value;
       const result = $('#contactResult').value;
-      s.notes.unshift({ time:'刚刚', title:`${channel}｜${source}`, text:`${result}：${note}；下次跟进 ${$('#nextTime').value.replace('T',' ')}` });
-      if ($('#taskPolicy').value.includes('完成')) state.tasks.forEach(t => { if (t.studentId === studentId && (t.type === source || source === '快速记录' || source === '档案跟进' || source === '列表跟进' || source === '新增联系')) t.status = '已完成'; });
-      closeModal(); renderAll(); if ($('#studentDrawer').classList.contains('open')) renderDrawer(); toast('✅ 已记录联系结果，并同步更新待办状态');
+      s.notes.unshift({ time:'刚刚', title:`${channel}｜${source}`, type:source, channel, operator:'王老师', status:result, source:'LP手动记录', text:`${result}：${note}；下次跟进 ${$('#nextTime').value.replace('T',' ')}` });
+      closeModal(); renderAll(); if ($('#studentDrawer').classList.contains('open')) renderDrawer(); toast('✅ Follow 已记录，任务状态将由系统根据业务规则更新');
     }
 
     function openScheduleModal(studentId) {
